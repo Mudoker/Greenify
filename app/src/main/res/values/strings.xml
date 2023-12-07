@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Greenify</string>
+    <string name="welcome_back">Welcome Back</string>
+    <string name="please_login_to_continue">Please login to continue</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="please_log_in_to_your_account_to_join_the_community">Please log in to join the community</string>
+    <string name="forgot_password">Forgot password</string>
+    <string name="login">Login</string>
+    <string name="logo_description">text_leaf</string>
+    <string name="register">Register</string>
+    <string name="or_sign_in_with">OR SIGN IN WITH</string>
+    <string name="login_with_google">Login with Google</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="about_us">About us</string>
+</resources>
