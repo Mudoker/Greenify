@@ -13,4 +13,8 @@
     <string name="login_with_google">Login with Google</string>
     <string name="continue_with_google">Continue with Google</string>
     <string name="about_us">About us</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="create_an_account_for_exclusive_features_and_services">Create an account for exclusive features and services</string>
+    <string name="username">Username</string>
+    <string name="already_a_member">Already a member ?</string>
 </resources>
