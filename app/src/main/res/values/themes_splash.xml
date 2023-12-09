@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.App.Staring" parent="Theme.SplashScreen">
-        <item name="android:windowSplashScreenBackground"> @color/dark_blue </item>
-        <item name="windowSplashScreenAnimatedIcon"> @drawable/greenify_app_logo </item>
-        <item name="postSplashScreenTheme"> @style/Theme.Greenify </item>
+        <item name="android:windowSplashScreenBackground">@color/dark_blue</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/app_logo</item>
+        <item name="postSplashScreenTheme">@style/Theme.Greenify</item>
     </style>
 </resources>
