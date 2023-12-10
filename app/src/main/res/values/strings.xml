@@ -13,8 +13,28 @@
     <string name="login_with_google">Login with Google</string>
     <string name="continue_with_google">Continue with Google</string>
     <string name="about_us">About us</string>
+    <string name="need_help">Need help ?</string>
+
     <string name="sign_up">Sign Up</string>
     <string name="create_an_account_for_exclusive_features_and_services">Create an account for exclusive features and services</string>
     <string name="username">Username</string>
     <string name="already_a_member">Already a member ?</string>
+    <string name="globally_2023">Globally, 2023</string>
+    <string name="the_world_counts_inc_2023">THE WORLD COUNTS INC. 2023</string>
+    <string name="_1_995_215_982">1,995,215,982</string>
+    <string name="our_mission">Our Mission</string>
+    <string name="app_mission">Fueled by passion and community, we empower individuals to tackle trash and build a cleaner future. Join us, one cleanup at a time.</string>
+    <string name="kitten">Kitten</string>
+    <string name="quoc_quote">Driven to make the world cleaner and better. Passionate about environmental solutions, waste management, and sustainability.\nSeeking collaboration to build a greener future.</string>
+    <string name="quoc_title">Doan Huu Quoc\nCo-Founder, CEO and Chairman</string>
+    <string name="our_ceo">Our CEO</string>
+    <string name="phone_num">083 9999 999</string>
+    <string name="tel_84">Tel (+84)</string>
+    <string name="huuquoc7603_gmail_com">huuquoc7603@gmail.com</string>
+    <string name="address">Address</string>
+    <string name="contact_us">Contact us</string>
+    <string name="quoc_address">123 Quoc Street, D.13, W.10, HCMC</string>
+    <string name="copyright_2023_mudoker">Copyright @2023, Mudoker</string>
+    <string name="app_version_1_0_0">App Version 1.0.0</string>
+    <string name="tons_of_waste_dumped">Tons of waste dumped</string>
 </resources>
