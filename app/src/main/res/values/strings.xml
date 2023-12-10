@@ -37,4 +37,21 @@
     <string name="copyright_2023_mudoker">Copyright @2023, Mudoker</string>
     <string name="app_version_1_0_0">App Version 1.0.0</string>
     <string name="tons_of_waste_dumped">Tons of waste dumped</string>
+
+    <string name="walkthru_title_learning_title">Collaborative Learning and Sharing</string>
+    <string name="walkthru_title_learning_des">Together, we learn, share expertise, gain insights, and grow.</string>
+
+    <string name="walkthru_title_planting_title">Heal the Earth, One Action at a Time</string>
+    <string name="walkthru_title_planting_des">No matter how small, your actions can create a ripple effect of positive change.</string>
+
+    <string name="walkthru_title_collecting_title">Together, We Will Clean the World</string>
+    <string name="walkthru_title_collecting_des">Empowering individuals to care for their environment for a cleaner future.</string>
+
+    <string name="walkthru_title_volunteering_title">Join Hands, Build Hope</string>
+    <string name="walkthru_title_volunteering_des">Together, let us build a future that is just, equitable, and sustainable.</string>
+    <string name="skip">Skip</string>
+    <string name="next">Next</string>
+    <string name="back">Back</string>
+    <string name="digging">Digging</string>
+
 </resources>

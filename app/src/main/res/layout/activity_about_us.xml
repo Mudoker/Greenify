@@ -171,8 +171,7 @@
             android:text="@string/huuquoc7603_gmail_com"
             android:textSize="18sp"
             android:layout_marginStart="44dp"
-            app:layout_constraintLeft_toRightOf="@id/about_txt_our_ceo_email"
-            android:clickable="true"/>
+            app:layout_constraintLeft_toRightOf="@id/about_txt_our_ceo_email"/>
 
         <TextView
             android:id="@+id/about_txt_our_ceo_tel"
@@ -193,8 +192,7 @@
             android:text="@string/phone_num"
             android:textSize="18sp"
             android:layout_marginStart="15dp"
-            app:layout_constraintLeft_toRightOf="@id/about_txt_our_ceo_tel"
-            android:clickable="true"/>
+            app:layout_constraintLeft_toRightOf="@id/about_txt_our_ceo_tel"/>
 
         <TextView
             android:id="@+id/about_txt_our_ceo_address"
@@ -215,8 +213,7 @@
             android:text="@string/quoc_address"
             android:textSize="18sp"
             android:layout_marginStart="20dp"
-            app:layout_constraintLeft_toRightOf="@id/about_txt_our_ceo_address"
-            android:clickable="true"/>
+            app:layout_constraintLeft_toRightOf="@id/about_txt_our_ceo_address" />
 
         <TextView
             android:id="@+id/about_txt_app_version"
