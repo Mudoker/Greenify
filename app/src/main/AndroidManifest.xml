@@ -10,17 +10,16 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        tools:targetApi="31"
-        android:theme="@style/Theme.App.Staring">
+        android:supportsRtl="true">
         <activity
             android:name=".SignUpActivity"
+            android:theme="@style/Theme.Greenify"
             android:exported="false" />
         <!-- <activity -->
         <!-- android:name=".AuthenticationActivity" -->
         <!-- android:exported="false" /> -->
         <activity
-            android:name=".AuthenticationActivity"
+            android:name=".WalkThruActivity"
             android:theme="@style/Theme.App.Staring"
             android:exported="true">
             <intent-filter>

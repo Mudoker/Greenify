@@ -18,18 +18,9 @@ import androidx.core.content.ContextCompat;
 
 public class NotificationHelper {
     // Singleton
-    private static NotificationHelper notificationHelper;
 
     // Code
     private static final int PERMISSION_REQUEST_CODE = 101;
-
-    // Get singleton
-    public static NotificationHelper getInstance() {
-        if (notificationHelper == null) {
-            notificationHelper = new NotificationHelper();
-        }
-        return notificationHelper;
-    }
 
     // Get permission from user
     public boolean requestPermission(Context context) {
