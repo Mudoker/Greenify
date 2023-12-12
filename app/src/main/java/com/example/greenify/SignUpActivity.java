@@ -1,11 +1,21 @@
 package com.example.greenify;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.utils.widget.ImageFilterView;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -15,7 +25,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        setContentView(R.layout.activity_sign_up);
+        setContentView(R.layout.fragment_profile);
         // Hide system bars after setting content view
         Window window = getWindow();
         WindowInsetsController insetsController = window.getInsetsController();
@@ -23,5 +33,138 @@ public class SignUpActivity extends AppCompatActivity {
             insetsController.hide(WindowInsets.Type.systemBars());
             insetsController.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_DEFAULT);
         }
+
+        LinearLayout profileRecentActLayout = findViewById(R.id.profile_recent_act_layout);
+
+        float scale = getResources().getDisplayMetrics().density;
+        int imageSizeInDp = 100; // Replace with your desired size in dp
+        int imageSizeInPixels = (int) (imageSizeInDp * scale + 0.5f);
+        int cardCornerRadius = (int) (20 * scale + 0.5f);
+
+        for (int i = 0; i < 10; i++) {
+            CardView cardView = new CardView(this);
+
+            LinearLayout.LayoutParams cardParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+
+            cardParams.setMargins(0, dpToPx(this, 5), 0, dpToPx(this,0)); // Adjust margins as needed
+            cardView.setLayoutParams(cardParams);
+            cardView.setCardBackgroundColor(getResources().getColor(R.color.dark_blue));
+            cardView.setRadius(cardCornerRadius);
+
+            // Create the content views programmatically
+            ImageFilterView profileImage = new ImageFilterView(this);
+            profileImage.setId(View.generateViewId()); // Generate a unique ID for each view
+
+// Adjust the LayoutParams to include a margin of 10
+            LinearLayout.LayoutParams imageLayoutParams = new LinearLayout.LayoutParams(
+                    imageSizeInPixels,
+                    imageSizeInPixels
+            );
+            imageLayoutParams.setMargins(dpToPx(this,10), dpToPx(this,10), dpToPx(this,10), dpToPx(this,10)); // Add margins (left, top, right, bottom)
+            profileImage.setLayoutParams(imageLayoutParams);
+
+            profileImage.setImageResource(R.drawable.ic_outreach);
+            profileImage.setColorFilter(Color.WHITE);
+
+            LinearLayout textLayout = new LinearLayout(this);
+
+// Set layout parameters with margin and weight
+            LinearLayout.LayoutParams textLayoutParams = new LinearLayout.LayoutParams(
+                    0,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    1.0f
+            );
+            textLayoutParams.setMargins(dpToPx(this, 10), dpToPx(this, 10), dpToPx(this, 10), dpToPx(this, 10)); // Add margin (top, start, bottom, end)
+            textLayout.setLayoutParams(textLayoutParams);
+
+            textLayout.setOrientation(LinearLayout.VERTICAL);
+            textLayout.setGravity(Gravity.CENTER_VERTICAL); // Center vertically
+
+
+            TextView titleTextView = new TextView(this);
+            titleTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            ));
+            titleTextView.setId(View.generateViewId());
+            titleTextView.setText(R.string.event_title);
+            titleTextView.setTextColor(getResources().getColor(R.color.white));
+            titleTextView.setTextSize(30);
+            titleTextView.setTypeface(titleTextView.getTypeface(), Typeface.BOLD);
+            titleTextView.setAlpha(0.8f);
+            titleTextView.setGravity(Gravity.CENTER_VERTICAL); // Center vertically
+
+            TextView descriptionTextView = new TextView(this);
+            descriptionTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            ));
+            descriptionTextView.setId(View.generateViewId());
+            descriptionTextView.setText(R.string.hello_worlddddd);
+            descriptionTextView.setTextColor(getResources().getColor(R.color.white));
+            descriptionTextView.setTextSize(16);
+            descriptionTextView.setAlpha(0.8f);
+            descriptionTextView.setGravity(Gravity.CENTER_VERTICAL); // Center vertically
+
+            textLayout.addView(titleTextView);
+            textLayout.addView(descriptionTextView);
+
+            TextView doneTextView = new TextView(this);
+            LinearLayout.LayoutParams doneTextLayoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT
+            );
+            doneTextLayoutParams.setMarginEnd(dpToPx(this, 20)); // Add margin to the end (right)
+            doneTextView.setLayoutParams(doneTextLayoutParams);
+
+            doneTextView.setId(View.generateViewId());
+            doneTextView.setText(R.string.done);
+            doneTextView.setTextColor(getResources().getColor(R.color.light_green_1));
+            doneTextView.setTextSize(24);
+            doneTextView.setGravity(Gravity.CENTER_VERTICAL | Gravity.END);
+            // Center vertically and align to end
+
+            // Add content views to the CardView
+            LinearLayout cardContentLayout = new LinearLayout(this);
+            cardContentLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            ));
+            cardContentLayout.setOrientation(LinearLayout.HORIZONTAL);
+            cardContentLayout.addView(profileImage);
+            cardContentLayout.addView(textLayout);
+            cardContentLayout.addView(doneTextView);
+
+            cardView.addView(cardContentLayout); // Add the content layout to the CardView
+
+            profileRecentActLayout.addView(cardView); // Add the CardView to the parent layout
+        }
+    }
+
+    // Convert pixels to dp
+    public int pxToDp(Context context, int px) {
+        float density = context.getResources().getDisplayMetrics().density;
+        return Math.round(px / density);
+    }
+
+    // Convert dp to pixels
+    public int dpToPx(Context context, int dp) {
+        float density = context.getResources().getDisplayMetrics().density;
+        return Math.round(dp * density + 0.5f);
+    }
+
+    // Convert pixels to sp
+    public int pxToSp(Context context, int px) {
+        float scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
+        return Math.round(px / scaledDensity);
+    }
+
+    // Convert sp to pixels
+    public int spToPx(Context context, int sp) {
+        float scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
+        return Math.round(sp * scaledDensity);
     }
 }

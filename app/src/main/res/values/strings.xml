@@ -78,5 +78,30 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="_84_083_875_6241">(+84) 083 875 6241</string>
+    <string name="confirm">Confirm</string>
+    <string name="always_on">Always On</string>
+    <string name="only_alerts">Only Alerts</string>
+    <string name="always_off">Always Off</string>
+    <string name="sound_amp_notification"><![CDATA[Sound & Notification]]></string>
+    <string name="settings">Settings</string>
+    <string name="abcxyzabcxyzabcxyz">abcxyzabcxyzabcxyz</string>
+    <string name="phone">Phone</string>
+    <string name="account_center">Account Center</string>
+    <string name="map_zoom">Map Zoom</string>
+    <string name="distance_unit">Distance Unit</string>
+    <string name="metric">Metric</string>
+    <string name="log_out">Log Out</string>
+    <string name="push_notification">Push Notification</string>
+    <string name="mudoker">Mudoker</string>
+    <string name="hosts">Hosts</string>
+    <string name="points">Points</string>
+    <string name="_1307">1307</string>
+    <string name="done">Done</string>
+    <string name="event_title">Event Title</string>
+    <string name="hello_worlddddd">Hello Worlddddd!!!</string>
+    <string name="recent_activities">Recent Activities</string>
+    <string name="_999">999</string>
+    <string name="joins">Joins</string>
 
 </resources>

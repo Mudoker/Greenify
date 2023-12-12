@@ -69,7 +69,7 @@ public class WalkThruActivity extends AppCompatActivity {
         });
 
         skipButton.setOnClickListener(v -> {
-            startActivity(new Intent(this, DashboardActivity.class));
+            startActivity(new Intent(this, SignUpActivity.class));
             finish();
         });
 

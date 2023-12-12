@@ -1,6 +1,9 @@
 package com.example.greenify;
 
 import android.os.Bundle;
+import android.view.Window;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -19,7 +22,16 @@ public class DashboardActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dashboard);
-    }
 
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        setContentView(R.layout.fragment_setting);
+        // Hide system bars after setting content view
+        Window window = getWindow();
+        WindowInsetsController insetsController = window.getInsetsController();
+        if (insetsController != null) {
+            insetsController.hide(WindowInsets.Type.systemBars());
+            insetsController.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_DEFAULT);
+        }
+    }
 }
