@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,16 +13,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
         <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_settings" />
+        <activity
+            android:name=".DashboardActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Greenify" />
+        <activity
             android:name=".SignUpActivity"
-            android:theme="@style/Theme.Greenify"
-            android:exported="false" />
-        <!-- <activity -->
-        <!-- android:name=".AuthenticationActivity" -->
-        <!-- android:exported="false" /> -->
+            android:exported="false"
+            android:theme="@style/Theme.Greenify" />
+        <activity
+            android:name=".AuthenticationActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Greenify" />
         <activity
             android:name=".WalkThruActivity"
-            android:theme="@style/Theme.App.Staring"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.App.Staring">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

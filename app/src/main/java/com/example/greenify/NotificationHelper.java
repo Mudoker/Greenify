@@ -17,25 +17,6 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 public class NotificationHelper {
-    // Singleton
-
-    // Code
-    private static final int PERMISSION_REQUEST_CODE = 101;
-
-    // Get permission from user
-    public boolean requestPermission(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.POST_NOTIFICATIONS}, PERMISSION_REQUEST_CODE);
-                return false;
-            } else {
-                return true;
-            }
-        } else {
-            return true;
-        }
-    }
-
     // Push notification
     public void sendNotification(Context context, int smallIcon, String channelId, String contentTitle, String contentText, int colorCode, AppCompatActivity intentDestination) {
         NotificationCompat.Builder notificationCompatBuilder = new NotificationCompat.Builder(context, channelId);

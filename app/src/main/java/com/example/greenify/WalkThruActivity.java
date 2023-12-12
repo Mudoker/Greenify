@@ -2,7 +2,6 @@ package com.example.greenify;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
@@ -64,13 +63,13 @@ public class WalkThruActivity extends AppCompatActivity {
             if (currentPageIndex < walkThruPagerAdapter.getItemCount() - 1) {
                 mWalkThruSliderViewPager.setCurrentItem(currentPageIndex + 1, true);
             } else {
-                startActivity(new Intent(this, SignUpActivity.class));
+                startActivity(new Intent(this, DashboardActivity.class));
                 finish();
             }
         });
 
         skipButton.setOnClickListener(v -> {
-            startActivity(new Intent(this, SignUpActivity.class));
+            startActivity(new Intent(this, DashboardActivity.class));
             finish();
         });
 
