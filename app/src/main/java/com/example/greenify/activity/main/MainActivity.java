@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         WindowInsetsController insetsController = window.getInsetsController();
         if (insetsController != null) {
             insetsController.hide(WindowInsets.Type.systemBars());
-            insetsController.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_DEFAULT);
+            insetsController.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
         }
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);

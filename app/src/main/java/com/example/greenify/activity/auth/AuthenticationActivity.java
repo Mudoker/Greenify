@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.greenify.R;
 import com.example.greenify.util.ApplicationUtils;
-import com.example.greenify.util.Environment;
 
 public class AuthenticationActivity extends AppCompatActivity {
 
@@ -28,12 +27,12 @@ public class AuthenticationActivity extends AppCompatActivity {
         WindowInsetsController insetsController = window.getInsetsController();
         if (insetsController != null) {
             insetsController.hide(WindowInsets.Type.systemBars());
-            insetsController.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_DEFAULT);
+            insetsController.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
         }
 //        Button btnLogin = findViewById(R.id.auth_btn_login);
         TextView btnNeedHelp = findViewById(R.id.auth_btn_need_help);
 
-        btnNeedHelp.setOnClickListener((v) -> ApplicationUtils.showDialog(this, "Technical Support", "Please contact " + Environment.getSupportEmail() + " for more information."));
+        btnNeedHelp.setOnClickListener((v) -> ApplicationUtils.sendEmail(this));
 //
 //        btnLogin.setOnClickListener((v) -> notificationHelper.sendNotification(this, R.mipmap.app_logo, "101", "Hello World", "Today is good", R.color.dark_blue, AuthenticationActivity.this));
     }

@@ -16,6 +16,7 @@ import androidx.core.text.HtmlCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.greenify.R;
+import com.example.greenify.activity.auth.AuthenticationActivity;
 import com.example.greenify.activity.main.MainActivity;
 
 public class WalkThruActivity extends AppCompatActivity {
@@ -45,7 +46,7 @@ public class WalkThruActivity extends AppCompatActivity {
             // Hide system bars
             insetsController.hide(WindowInsets.Type.systemBars());
             // Set system bars behavior to default
-            insetsController.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_DEFAULT);
+            insetsController.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
         }
 
         setContentView(R.layout.activity_walk_through);
@@ -71,7 +72,7 @@ public class WalkThruActivity extends AppCompatActivity {
         });
 
         skipButton.setOnClickListener(v -> {
-            startActivity(new Intent(this, MainActivity.class));
+            startActivity(new Intent(this, AuthenticationActivity.class));
             finish();
         });
 
@@ -94,9 +95,7 @@ public class WalkThruActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
-        backButton.setTextColor(currentPageIndex > 0
-                ? ContextCompat.getColor(this, R.color.light_green_1)
-                : ContextCompat.getColor(this, R.color.gray));
+        backButton.setTextColor(currentPageIndex > 0 ? ContextCompat.getColor(this, R.color.light_green_1) : ContextCompat.getColor(this, R.color.gray));
 
         if (currentPageIndex == walkThruPagerAdapter.getItemCount() - 1) {
             nextButton.setText(R.string.login);

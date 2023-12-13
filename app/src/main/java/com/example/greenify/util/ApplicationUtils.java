@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
@@ -15,14 +16,20 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 public class ApplicationUtils {
+    // Push notification
     private static NotificationHelper notificationHelper;
+
+    // User session
+    private static SessionManager sessionManager;
+
+    //Constants
     private static final int NOTIFICATIONS_PERMISSION_REQUEST_CODE = 101;
     private static final int STORAGE_PERMISSION_REQUEST_CODE = 102;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 103;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 104;
 
     // Get permissions from the user
-    public void requestPermissions(Context context) {
+    public static void requestPermissions(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // Check if permission to post notifications is granted
             if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -104,5 +111,22 @@ public class ApplicationUtils {
     public static int spToPx(Context context, int sp) {
         float scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
         return Math.round(sp * scaledDensity);
+    }
+
+    public static void sendEmail(Context context) {
+        String emailAddress = Environment.getSupportEmail();
+
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.putExtra(Intent.EXTRA_EMAIL, emailAddress);
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Technical Support Request");
+        intent.putExtra(Intent.EXTRA_TEXT, "I need support. Please help me!!!");
+
+        intent.setType("message/rfc822");
+
+        if (intent.resolveActivity(context.getPackageManager()) != null) {
+            context.startActivity(Intent.createChooser(intent, "Choose an app"));
+        } else {
+            ApplicationUtils.showDialog(context, "Technical Support", "Please contact " + Environment.getSupportEmail() + " for more information.");
+        }
     }
 }

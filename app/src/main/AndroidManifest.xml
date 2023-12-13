@@ -2,7 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
+    <queries>
+        <!-- Queries for email-related packages -->
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="mailto" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+            <data android:mimeType="message/rfc822" />
+        </intent>
+    </queries>
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -11,12 +21,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
-
+        <activity
+            android:name=".activity.test"
+            android:theme="@style/Theme.Greenify"
+            android:exported="false" />
         <activity
             android:name=".activity.main.MainActivity"
             android:exported="false"
             android:theme="@style/Theme.Greenify" />
-
         <activity
             android:name=".activity.auth.SignUpActivity"
             android:exported="false"
@@ -25,7 +37,6 @@
             android:name=".activity.auth.AuthenticationActivity"
             android:exported="false"
             android:theme="@style/Theme.Greenify" />
-
         <activity
             android:name=".activity.walkthru.WalkThruActivity"
             android:exported="true"
