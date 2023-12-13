@@ -101,7 +101,7 @@
             android:textSize="20sp"
             android:fontFamily="@font/nunito_sans"
             android:textColor="@color/white"
-            android:alpha="0.9"
+            android:alpha="0.7"
             android:lineSpacingExtra="6dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
@@ -141,7 +141,7 @@
             app:layout_constraintTop_toBottomOf="@id/about_txt_our_ceo"
             android:textSize="20sp"
             android:textColor="@color/white"
-            android:alpha="0.9"
+            android:alpha="0.7"
             android:lineSpacingExtra="6dp"
             android:text="@string/quoc_quote" />
 
@@ -153,7 +153,7 @@
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginEnd="20dp"
             android:textColor="@color/white"
-            android:alpha="0.9"
+            android:alpha="0.7"
             android:textStyle="bold"
             android:textSize="18sp"
             android:textAlignment="textEnd"
@@ -185,7 +185,7 @@
             app:layout_constraintLeft_toLeftOf="@id/about_txt_ceo_contacts"
             android:textSize="18sp"
             android:textColor="@color/white"
-            android:alpha="0.9"
+            android:alpha="0.7"
             android:layout_marginTop="5dp"
             android:textStyle="bold" />
 
@@ -200,7 +200,7 @@
             android:layout_marginStart="44dp"
             android:layout_marginEnd="20dp"
             android:textColor="@color/white"
-            android:alpha="0.9"
+            android:alpha="0.7"
             app:layout_constraintRight_toRightOf="parent" />
 
         <TextView
@@ -214,7 +214,7 @@
             android:textSize="18sp"
             android:layout_marginTop="10dp"
             android:textColor="@color/white"
-            android:alpha="0.9"
+            android:alpha="0.7"
             android:textStyle="bold" />
 
         <TextView
@@ -227,7 +227,7 @@
             android:fontFamily="@font/nunito_sans"
             android:layout_marginStart="15dp"
             android:textColor="@color/white"
-            android:alpha="0.9"
+            android:alpha="0.7"
             android:layout_marginEnd="20dp"
             app:layout_constraintRight_toRightOf="parent" />
 
@@ -242,7 +242,7 @@
             android:fontFamily="@font/nunito_sans"
             android:layout_marginTop="10dp"
             android:textColor="@color/white"
-            android:alpha="0.9"
+            android:alpha="0.7"
             android:textStyle="bold" />
 
         <TextView
@@ -250,7 +250,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:alpha="0.9"
+            android:alpha="0.7"
             app:layout_constraintBottom_toBottomOf="@id/about_txt_our_ceo_address"
             android:text="@string/quoc_address"
             android:textSize="18sp"
@@ -263,14 +263,14 @@
             android:id="@+id/about_txt_app_version"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/app_version_1_0_0"
+            android:text="@string/app_version"
             app:layout_constraintTop_toBottomOf="@id/about_txt_our_ceo_address_des"
             android:textColor="@color/white"
             android:textStyle="bold"
             android:textSize="18sp"
             android:fontFamily="@font/nunito_sans"
             android:layout_marginEnd="20dp"
-            android:alpha="0.9"
+            android:alpha="0.7"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginVertical="20dp" />
 
@@ -283,7 +283,7 @@
             android:fontFamily="@font/nunito_sans"
             android:textStyle="bold"
             android:textSize="18sp"
-            android:alpha="0.9"
+            android:alpha="0.7"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginVertical="20dp" />

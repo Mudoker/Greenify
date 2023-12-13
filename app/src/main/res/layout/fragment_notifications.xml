@@ -52,20 +52,19 @@
                 android:layout_width="match_parent"
                 android:layout_margin="10dp"
                 app:cardCornerRadius="20dp"
+                android:backgroundTint="@color/gray_50"
                 android:layout_height="wrap_content">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:padding="10dp"
-                    android:backgroundTint="@color/white"
-                    android:alpha="0.7"
                     android:layout_height="wrap_content">
 
                     <androidx.constraintlayout.utils.widget.ImageFilterView
                         android:id="@+id/noti_img_user_ava"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
-                        android:tint="@color/black"
+                        android:tint="@color/white"
                         android:src="@drawable/ic_outreach"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
@@ -80,7 +79,7 @@
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:fontFamily="@font/nunito_sans"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintBottom_toTopOf="@+id/noti_txt_time" />
 
@@ -92,7 +91,7 @@
                         android:textSize="16sp"
                         android:fontFamily="@font/nunito_sans"
                         android:textStyle="italic"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         app:layout_constraintTop_toBottomOf="@+id/noti_txt_title"
                         app:layout_constraintStart_toStartOf="@+id/noti_txt_title"
                         app:layout_constraintEnd_toEndOf="@+id/noti_txt_title"
@@ -104,19 +103,19 @@
                 android:layout_width="match_parent"
                 android:layout_margin="10dp"
                 app:cardCornerRadius="20dp"
+                android:backgroundTint="@color/gray_50"
                 android:layout_height="wrap_content">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:padding="10dp"
-                    android:backgroundTint="@color/white"
-                    android:alpha="0.7"
                     android:layout_height="wrap_content">
 
                     <androidx.constraintlayout.utils.widget.ImageFilterView
                         android:id="@+id/noti_img_user_ava_2"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
+                        android:tint="@color/white"
                         android:src="@drawable/ic_outreach"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
@@ -131,7 +130,7 @@
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:fontFamily="@font/nunito_sans"
-                        android:textColor="@color/dark_blue"
+                        android:textColor="@color/white"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintBottom_toTopOf="@+id/noti_txt_time_2" />
 
@@ -143,7 +142,7 @@
                         android:textSize="16sp"
                         android:fontFamily="@font/nunito_sans"
                         android:textStyle="italic"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         app:layout_constraintTop_toBottomOf="@+id/noti_txt_title_2"
                         app:layout_constraintStart_toStartOf="@+id/noti_txt_title_2"
                         app:layout_constraintEnd_toEndOf="@+id/noti_txt_title_2"

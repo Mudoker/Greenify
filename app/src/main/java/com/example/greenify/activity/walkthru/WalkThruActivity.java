@@ -16,7 +16,6 @@ import androidx.core.text.HtmlCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.greenify.R;
-import com.example.greenify.activity.auth.AuthenticationActivity;
 import com.example.greenify.activity.main.MainActivity;
 
 public class WalkThruActivity extends AppCompatActivity {
@@ -72,7 +71,7 @@ public class WalkThruActivity extends AppCompatActivity {
         });
 
         skipButton.setOnClickListener(v -> {
-            startActivity(new Intent(this, AuthenticationActivity.class));
+            startActivity(new Intent(this, MainActivity.class));
             finish();
         });
 
