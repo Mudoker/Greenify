@@ -1,20 +1,13 @@
-package com.example.greenify;
+package com.example.greenify.util;
 
-import android.Manifest;
-import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.os.Build;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 
 public class NotificationHelper {
     // Push notification

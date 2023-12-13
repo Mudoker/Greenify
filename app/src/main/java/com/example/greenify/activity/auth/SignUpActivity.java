@@ -1,10 +1,5 @@
-package com.example.greenify;
+package com.example.greenify.activity.auth;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.utils.widget.ImageFilterView;
-
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -15,9 +10,15 @@ import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.utils.widget.ImageFilterView;
+
+import com.example.greenify.R;
+import com.example.greenify.util.ApplicationUtils;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -43,8 +44,8 @@ public class SignUpActivity extends AppCompatActivity {
         for (int i = 0; i < 7; i++) {
             CardView cardView = new CardView(this);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    ApplicationUtils.dpToPx(this,200), // Width
-            ApplicationUtils.dpToPx(this, 100)  // Height
+                    ApplicationUtils.dpToPx(this, 200), // Width
+                    ApplicationUtils.dpToPx(this, 100)  // Height
             );
             layoutParams.setMargins(ApplicationUtils.dpToPx(this, 16), ApplicationUtils.dpToPx(this, 16), ApplicationUtils.dpToPx(this, 16), ApplicationUtils.dpToPx(this, 16));
             cardView.setLayoutParams(layoutParams);
@@ -93,7 +94,7 @@ public class SignUpActivity extends AppCompatActivity {
                     imageSizeInPixels,
                     imageSizeInPixels
             );
-            imageLayoutParams.setMargins(ApplicationUtils.dpToPx(this,10), ApplicationUtils.dpToPx(this,10), ApplicationUtils.dpToPx(this,10), ApplicationUtils.dpToPx(this,10)); // Add margins (left, top, right, bottom)
+            imageLayoutParams.setMargins(ApplicationUtils.dpToPx(this, 10), ApplicationUtils.dpToPx(this, 10), ApplicationUtils.dpToPx(this, 10), ApplicationUtils.dpToPx(this, 10)); // Add margins (left, top, right, bottom)
             profileImage.setLayoutParams(imageLayoutParams);
 
             profileImage.setImageResource(R.drawable.ic_outreach);

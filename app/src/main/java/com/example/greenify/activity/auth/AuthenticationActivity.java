@@ -1,13 +1,16 @@
-package com.example.greenify;
-
-import androidx.appcompat.app.AppCompatActivity;
+package com.example.greenify.activity.auth;
 
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
-import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.greenify.R;
+import com.example.greenify.util.ApplicationUtils;
+import com.example.greenify.util.Environment;
 
 public class AuthenticationActivity extends AppCompatActivity {
 

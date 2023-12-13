@@ -33,7 +33,7 @@
     <string name="huuquoc7603_gmail_com">huuquoc7603@gmail.com</string>
     <string name="address">Address</string>
     <string name="contact_us">Contact us</string>
-    <string name="quoc_address">123 Quoc Street, D.13, W.10, HCMC</string>
+    <string name="quoc_address">123 Street, D.13, W.10, HCMC</string>
     <string name="copyright_2023_mudoker">Copyright @2023, Mudoker</string>
     <string name="app_version_1_0_0">App Version 1.0.0</string>
     <string name="tons_of_waste_dumped">Tons of waste dumped</string>
@@ -87,7 +87,7 @@
     <string name="settings">Settings</string>
     <string name="abcxyzabcxyzabcxyz">abcxyzabcxyzabcxyz</string>
     <string name="phone">Phone</string>
-    <string name="account_center">Account Center</string>
+    <string name="account_center">Profile</string>
     <string name="map_zoom">Map Zoom</string>
     <string name="distance_unit">Distance Unit</string>
     <string name="metric">Metric</string>
@@ -105,5 +105,7 @@
     <string name="joins">Joins</string>
     <string name="your_events">Your Events</string>
     <string name="your_enrollments">Your Enrollments</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

@@ -26,10 +26,11 @@
         app:layout_constraintRight_toRightOf="parent"
         android:textColor="@color/white"
         android:textSize="35sp"
+        android:fontFamily="@font/nunito_sans"
         android:textStyle="bold"
         android:textAlignment="center"
         android:alpha="0.8"
-        android:layout_marginTop="25dp"/>
+        android:layout_marginTop="25dp" />
 
     <TextView
         android:id="@+id/walk_thru_slider_des"
@@ -39,6 +40,7 @@
         app:layout_constraintTop_toBottomOf="@id/walk_thru_slider_title"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        android:fontFamily="@font/nunito_sans"
         android:textSize="23sp"
         android:textAlignment="center"
         android:textStyle="bold"
@@ -46,5 +48,5 @@
         android:layout_marginHorizontal="15dp"
         android:alpha="0.6"
         android:lineSpacingExtra="2dp"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="20dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

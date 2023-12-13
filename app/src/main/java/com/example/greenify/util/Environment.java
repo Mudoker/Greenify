@@ -1,4 +1,4 @@
-package com.example.greenify;
+package com.example.greenify.util;
 
 public class Environment {
     private static final String SUPPORT_EMAIL = "huuquoc7603@gmail.com";

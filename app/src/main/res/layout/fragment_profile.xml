@@ -28,7 +28,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/account_center"
                     android:textColor="@color/white"
-                    android:textSize="20sp"
+                    android:fontFamily="@font/nunito_sans"
+                    android:textSize="26sp"
                     android:textStyle="bold" />
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -41,7 +42,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/background_light">
+            android:background="@color/dark_blue">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/profile_card_user_info"
@@ -74,7 +75,8 @@
                         android:textColor="@color/white"
                         app:layout_constraintLeft_toLeftOf="@id/profile_img_user_ava"
                         app:layout_constraintRight_toRightOf="@id/profile_img_user_ava"
-                        android:textSize="33sp"
+                        android:textSize="30sp"
+                        android:fontFamily="@font/nunito_sans"
                         android:textStyle="bold"
                         android:layout_marginTop="20dp"
                         android:alpha="0.8" />
@@ -88,8 +90,9 @@
                         android:textColor="@color/white"
                         app:layout_constraintLeft_toLeftOf="@id/profile_img_user_ava"
                         app:layout_constraintRight_toRightOf="@id/profile_img_user_ava"
-                        android:textSize="23sp"
+                        android:textSize="20sp"
                         android:textStyle="bold"
+                        android:fontFamily="@font/nunito_sans"
                         android:layout_marginTop="5dp"
                         android:alpha="0.6" />
 
@@ -109,6 +112,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/_999"
+                            android:fontFamily="@font/nunito_sans"
                             android:textColor="@color/white"
                             android:textSize="26sp"
                             android:textStyle="bold" />
@@ -121,6 +125,7 @@
                             android:textColor="@color/white"
                             android:textSize="20sp"
                             android:textStyle="bold"
+                            android:fontFamily="@font/nunito_sans"
                             android:layout_marginBottom="30dp"
                             android:alpha="0.7" />
                     </LinearLayout>
@@ -141,6 +146,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/_1307"
+                            android:fontFamily="@font/nunito_sans"
                             android:textColor="@color/white"
                             android:textSize="26sp"
                             android:textStyle="bold" />
@@ -152,6 +158,7 @@
                             android:text="@string/points"
                             android:textColor="@color/white"
                             android:textSize="20sp"
+                            android:fontFamily="@font/nunito_sans"
                             android:textStyle="bold"
                             android:layout_marginBottom="30dp"
                             android:alpha="0.7" />
@@ -175,6 +182,7 @@
                             android:text="@string/_999"
                             android:textColor="@color/white"
                             android:textSize="26sp"
+                            android:fontFamily="@font/nunito_sans"
                             android:textStyle="bold" />
 
                         <TextView
@@ -183,6 +191,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/hosts"
                             android:textColor="@color/white"
+                            android:fontFamily="@font/nunito_sans"
                             android:textSize="20sp"
                             android:textStyle="bold"
                             android:alpha="0.7" />
@@ -194,9 +203,10 @@
                 android:id="@+id/profile_txt_host_event"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/dark_blue"
+                android:textColor="@color/white"
                 android:text="@string/your_events"
                 android:textSize="28sp"
+                android:fontFamily="@font/nunito_sans"
                 android:textStyle="bold"
                 app:layout_constraintTop_toBottomOf="@id/profile_card_user_info"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -223,14 +233,15 @@
                         android:layout_height="80dp"
                         app:cardCornerRadius="20dp"
                         android:clickable="true"
-                        android:backgroundTint="@color/dark_blue"
+                        android:alpha="0.85"
+                        android:backgroundTint="@color/white"
                         android:layout_margin="16dp">
 
                         <androidx.constraintlayout.utils.widget.ImageFilterView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:src="@drawable/ic_outreach"
-                            android:tint="@color/white" />
+                            android:tint="@color/dark_blue" />
 
                     </androidx.cardview.widget.CardView>
 
@@ -240,14 +251,15 @@
                         android:layout_height="80dp"
                         app:cardCornerRadius="20dp"
                         android:clickable="true"
-                        android:backgroundTint="@color/dark_blue"
+                        android:backgroundTint="@color/white"
+                        android:alpha="0.85"
                         android:layout_margin="16dp">
 
                         <androidx.constraintlayout.utils.widget.ImageFilterView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:src="@drawable/ic_outreach"
-                            android:tint="@color/white" />
+                            android:tint="@color/dark_blue" />
 
                     </androidx.cardview.widget.CardView>
 
@@ -258,8 +270,9 @@
                 android:id="@+id/profile_txt_enroll_event"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/dark_blue"
+                android:textColor="@color/white"
                 android:text="@string/your_enrollments"
+                android:fontFamily="@font/nunito_sans"
                 android:textSize="28sp"
                 android:textStyle="bold"
                 app:layout_constraintTop_toBottomOf="@id/profile_list_host_event"
@@ -285,14 +298,15 @@
                         android:layout_height="80dp"
                         app:cardCornerRadius="20dp"
                         android:clickable="true"
-                        android:backgroundTint="@color/dark_blue"
+                        android:alpha="0.85"
+                        android:backgroundTint="@color/white"
                         android:layout_margin="16dp">
 
                         <androidx.constraintlayout.utils.widget.ImageFilterView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:src="@drawable/ic_outreach"
-                            android:tint="@color/white" />
+                            android:tint="@color/dark_blue" />
 
                     </androidx.cardview.widget.CardView>
 
@@ -301,14 +315,15 @@
                         android:layout_height="80dp"
                         app:cardCornerRadius="20dp"
                         android:clickable="true"
-                        android:backgroundTint="@color/dark_blue"
+                        android:backgroundTint="@color/white"
+                        android:alpha="0.85"
                         android:layout_margin="16dp">
 
                         <androidx.constraintlayout.utils.widget.ImageFilterView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:src="@drawable/ic_outreach"
-                            android:tint="@color/white" />
+                            android:tint="@color/dark_blue" />
 
                     </androidx.cardview.widget.CardView>
                 </LinearLayout>
@@ -318,9 +333,10 @@
                 android:id="@+id/profile_txt_recent_act"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/dark_blue"
+                android:textColor="@color/white"
                 android:text="@string/recent_activities"
                 android:textSize="28sp"
+                android:fontFamily="@font/nunito_sans"
                 android:textStyle="bold"
                 app:layout_constraintTop_toBottomOf="@id/profile_list_enroll_event"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -332,7 +348,7 @@
                 android:id="@+id/profile_recent_act_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
+                android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="20dp"
                 app:layout_constraintTop_toBottomOf="@id/profile_txt_recent_act"
                 android:orientation="vertical">
@@ -342,7 +358,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:cardCornerRadius="20dp"
-                    android:backgroundTint="@color/dark_blue">
+                    android:backgroundTint="@color/white"
+                    android:alpha="0.85">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -353,7 +370,7 @@
                             android:layout_width="80dp"
                             android:layout_height="80dp"
                             android:src="@drawable/ic_outreach"
-                            android:tint="@color/white"
+                            android:tint="@color/dark_blue"
                             android:layout_margin="10dp" />
 
                         <LinearLayout
@@ -369,7 +386,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/event_title"
-                                android:textColor="@color/white"
+                                android:textColor="@color/dark_blue"
                                 android:textSize="26sp"
                                 android:textStyle="bold"
                                 android:alpha="0.8" />
@@ -379,7 +396,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/hello_worlddddd"
-                                android:textColor="@color/white"
+                                android:textColor="@color/dark_blue"
                                 android:textSize="16sp"
                                 android:alpha="0.8" />
                         </LinearLayout>
@@ -392,6 +409,7 @@
                             android:textColor="@color/light_green_1"
                             android:textSize="22sp"
                             android:layout_gravity="center"
+                            android:textStyle="bold"
                             android:layout_marginEnd="20dp" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>

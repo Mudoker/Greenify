@@ -1,4 +1,4 @@
-package com.example.greenify;
+package com.example.greenify.activity.walkthru;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +14,9 @@ import androidx.core.content.ContextCompat;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.core.text.HtmlCompat;
 import androidx.viewpager2.widget.ViewPager2;
+
+import com.example.greenify.R;
+import com.example.greenify.activity.main.MainActivity;
 
 public class WalkThruActivity extends AppCompatActivity {
 
@@ -62,13 +65,13 @@ public class WalkThruActivity extends AppCompatActivity {
             if (currentPageIndex < walkThruPagerAdapter.getItemCount() - 1) {
                 mWalkThruSliderViewPager.setCurrentItem(currentPageIndex + 1, true);
             } else {
-                startActivity(new Intent(this, SettingsActivity.class));
+                startActivity(new Intent(this, MainActivity.class));
                 finish();
             }
         });
 
         skipButton.setOnClickListener(v -> {
-            startActivity(new Intent(this, DashboardActivity.class));
+            startActivity(new Intent(this, MainActivity.class));
             finish();
         });
 

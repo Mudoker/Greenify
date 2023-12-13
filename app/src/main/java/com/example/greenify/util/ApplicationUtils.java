@@ -1,4 +1,4 @@
-package com.example.greenify;
+package com.example.greenify.util;
 
 import android.Manifest;
 import android.app.Activity;
