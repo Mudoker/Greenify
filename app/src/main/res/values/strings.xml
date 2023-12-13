@@ -103,5 +103,7 @@
     <string name="recent_activities">Recent Activities</string>
     <string name="_999">999</string>
     <string name="joins">Joins</string>
+    <string name="your_events">Your Events</string>
+    <string name="your_enrollments">Your Enrollments</string>
 
 </resources>

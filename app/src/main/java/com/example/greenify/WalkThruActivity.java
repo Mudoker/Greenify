@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-
 import androidx.core.splashscreen.SplashScreen;
 import androidx.core.text.HtmlCompat;
 import androidx.viewpager2.widget.ViewPager2;
@@ -63,13 +62,13 @@ public class WalkThruActivity extends AppCompatActivity {
             if (currentPageIndex < walkThruPagerAdapter.getItemCount() - 1) {
                 mWalkThruSliderViewPager.setCurrentItem(currentPageIndex + 1, true);
             } else {
-                startActivity(new Intent(this, DashboardActivity.class));
+                startActivity(new Intent(this, SettingsActivity.class));
                 finish();
             }
         });
 
         skipButton.setOnClickListener(v -> {
-            startActivity(new Intent(this, SignUpActivity.class));
+            startActivity(new Intent(this, DashboardActivity.class));
             finish();
         });
 

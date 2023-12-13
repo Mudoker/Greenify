@@ -10,9 +10,11 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -34,6 +36,34 @@ public class SignUpActivity extends AppCompatActivity {
             insetsController.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_DEFAULT);
         }
 
+        HorizontalScrollView horizontalScrollView = findViewById(R.id.profile_list_host_event);
+        LinearLayout linearLayout = findViewById(R.id.profile_list_host_event_layout);
+
+        // Create 7 CardViews
+        for (int i = 0; i < 7; i++) {
+            CardView cardView = new CardView(this);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    ApplicationUtils.dpToPx(this,200), // Width
+            ApplicationUtils.dpToPx(this, 100)  // Height
+            );
+            layoutParams.setMargins(ApplicationUtils.dpToPx(this, 16), ApplicationUtils.dpToPx(this, 16), ApplicationUtils.dpToPx(this, 16), ApplicationUtils.dpToPx(this, 16));
+            cardView.setLayoutParams(layoutParams);
+            cardView.setRadius(ApplicationUtils.dpToPx(this, 20));
+            cardView.setClickable(true);
+            cardView.setCardBackgroundColor(getResources().getColor(R.color.dark_blue));
+
+            ImageFilterView imageFilterView = new ImageFilterView(this);
+            imageFilterView.setLayoutParams(new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            ));
+            imageFilterView.setImageResource(R.drawable.ic_outreach);
+            imageFilterView.setColorFilter(getResources().getColor(R.color.white));
+
+            cardView.addView(imageFilterView);
+            linearLayout.addView(cardView);
+        }
+
         LinearLayout profileRecentActLayout = findViewById(R.id.profile_recent_act_layout);
 
         float scale = getResources().getDisplayMetrics().density;
@@ -49,7 +79,7 @@ public class SignUpActivity extends AppCompatActivity {
                     LinearLayout.LayoutParams.WRAP_CONTENT
             );
 
-            cardParams.setMargins(0, dpToPx(this, 5), 0, dpToPx(this,0)); // Adjust margins as needed
+            cardParams.setMargins(0, ApplicationUtils.dpToPx(this, 5), 0, ApplicationUtils.dpToPx(this, 5)); // Adjust margins as needed
             cardView.setLayoutParams(cardParams);
             cardView.setCardBackgroundColor(getResources().getColor(R.color.dark_blue));
             cardView.setRadius(cardCornerRadius);
@@ -63,7 +93,7 @@ public class SignUpActivity extends AppCompatActivity {
                     imageSizeInPixels,
                     imageSizeInPixels
             );
-            imageLayoutParams.setMargins(dpToPx(this,10), dpToPx(this,10), dpToPx(this,10), dpToPx(this,10)); // Add margins (left, top, right, bottom)
+            imageLayoutParams.setMargins(ApplicationUtils.dpToPx(this,10), ApplicationUtils.dpToPx(this,10), ApplicationUtils.dpToPx(this,10), ApplicationUtils.dpToPx(this,10)); // Add margins (left, top, right, bottom)
             profileImage.setLayoutParams(imageLayoutParams);
 
             profileImage.setImageResource(R.drawable.ic_outreach);
@@ -77,7 +107,7 @@ public class SignUpActivity extends AppCompatActivity {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     1.0f
             );
-            textLayoutParams.setMargins(dpToPx(this, 10), dpToPx(this, 10), dpToPx(this, 10), dpToPx(this, 10)); // Add margin (top, start, bottom, end)
+            textLayoutParams.setMargins(ApplicationUtils.dpToPx(this, 10), ApplicationUtils.dpToPx(this, 10), ApplicationUtils.dpToPx(this, 10), ApplicationUtils.dpToPx(this, 10)); // Add margin (top, start, bottom, end)
             textLayout.setLayoutParams(textLayoutParams);
 
             textLayout.setOrientation(LinearLayout.VERTICAL);
@@ -117,7 +147,7 @@ public class SignUpActivity extends AppCompatActivity {
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.MATCH_PARENT
             );
-            doneTextLayoutParams.setMarginEnd(dpToPx(this, 20)); // Add margin to the end (right)
+            doneTextLayoutParams.setMarginEnd(ApplicationUtils.dpToPx(this, 20)); // Add margin to the end (right)
             doneTextView.setLayoutParams(doneTextLayoutParams);
 
             doneTextView.setId(View.generateViewId());
@@ -142,29 +172,5 @@ public class SignUpActivity extends AppCompatActivity {
 
             profileRecentActLayout.addView(cardView); // Add the CardView to the parent layout
         }
-    }
-
-    // Convert pixels to dp
-    public int pxToDp(Context context, int px) {
-        float density = context.getResources().getDisplayMetrics().density;
-        return Math.round(px / density);
-    }
-
-    // Convert dp to pixels
-    public int dpToPx(Context context, int dp) {
-        float density = context.getResources().getDisplayMetrics().density;
-        return Math.round(dp * density + 0.5f);
-    }
-
-    // Convert pixels to sp
-    public int pxToSp(Context context, int px) {
-        float scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
-        return Math.round(px / scaledDensity);
-    }
-
-    // Convert sp to pixels
-    public int spToPx(Context context, int sp) {
-        float scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
-        return Math.round(sp * scaledDensity);
     }
 }

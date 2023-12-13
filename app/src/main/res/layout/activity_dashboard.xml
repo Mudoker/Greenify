@@ -1,20 +1,402 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity">
 
-    <FrameLayout
-        android:id="@+id/fragment_container"
+    <!-- Your existing AppbarLayout and CollapsingToolbarLayout -->
+    <com.google.android.material.appbar.AppBarLayout
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/appBarLayout"
+        android:fitsSystemWindows="true"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_nav"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="wrap_content">
+
+        <!-- Your existing Toolbar -->
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsingToolbarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/topNotchToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/dark_blue"
+                android:layout_gravity="top"> <!-- Added layout_gravity -->
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Dashboard"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <androidx.constraintlayout.utils.widget.ImageFilterView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:tint="@color/white"
+                    android:layout_marginEnd="20dp"
+                    android:layout_gravity="end"
+                    android:src="@drawable/ic_search" />
+            </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- ScrollView to contain the TextView -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_light"
+        android:layout_marginBottom="80dp"
+        android:layout_marginTop="?attr/actionBarSize">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/dashboard_txt_events"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginTop="20dp"
+                android:alpha="0.9"
+                android:fontFamily="monospace"
+                android:text="Popular Events"
+                android:textColor="@color/dark_blue"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+
+            <HorizontalScrollView
+                android:id="@+id/dashboard_layout_event_list"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="30dp"
+                android:scrollbars="none"
+                app:layout_constraintTop_toBottomOf="@id/dashboard_txt_events"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="25dp"
+                        android:orientation="vertical">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="280dp"
+                            app:cardCornerRadius="20dp"
+                            android:layout_height="300dp">
+
+                            <androidx.constraintlayout.utils.widget.ImageFilterView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:adjustViewBounds="true"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/test" />
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="28 days left"
+                            android:layout_marginTop="20dp"
+                            android:textSize="22sp"
+                            android:textStyle="bold"
+                            android:fontFamily="monospace"
+                            android:alpha="0.7" />
+
+                        <TextView
+                            android:layout_width="280dp"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_marginTop="10dp"
+                            android:text="Make your neighborhood cleaner"
+                            android:textSize="26sp"
+                            android:fontFamily="monospace" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_marginTop="20dp"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:gravity="start"
+                                android:textSize="18sp"
+                                android:fontFamily="monospace"
+                                android:text="Van Hanh Mall" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="end"
+                                android:textSize="18sp"
+                                android:fontFamily="monospace"
+                                android:text="14/12/2023" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="280dp"
+                            app:cardCornerRadius="20dp"
+                            android:layout_height="300dp">
+
+                            <androidx.constraintlayout.utils.widget.ImageFilterView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:adjustViewBounds="true"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/test" />
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="28 days left"
+                            android:layout_marginTop="20dp"
+                            android:textSize="22sp"
+                            android:textStyle="bold"
+                            android:fontFamily="monospace"
+                            android:alpha="0.7" />
+
+                        <TextView
+                            android:layout_width="280dp"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:layout_marginTop="10dp"
+                            android:text="Make your neighborhood cleaner"
+                            android:textSize="26sp"
+                            android:fontFamily="monospace" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_marginTop="20dp"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:gravity="start"
+                                android:textSize="18sp"
+                                android:fontFamily="monospace"
+                                android:text="Van Hanh Mall" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="end"
+                                android:textSize="18sp"
+                                android:fontFamily="monospace"
+                                android:text="14/12/2023" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <TextView
+                android:id="@+id/dashboard_txt_all_events"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="All Events"
+                app:layout_constraintTop_toBottomOf="@id/dashboard_layout_event_list"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:fontFamily="monospace"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:textColor="@color/dark_blue"
+                android:alpha="0.8"
+                android:layout_marginTop="30dp" />
+
+            <HorizontalScrollView
+                android:id="@+id/dashboard_btn_event_list_filter"
+                app:layout_constraintTop_toBottomOf="@id/dashboard_txt_all_events"
+                android:layout_width="match_parent"
+                android:scrollbars="none"
+                android:visibility="visible"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:orientation="horizontal">
+
+                    <!-- Button 1 -->
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
+                        android:text="All"
+                        android:layout_marginStart="2dp"
+                        android:backgroundTint="@color/dark_blue"
+                        android:alpha="0.8"
+                        android:textColor="@color/white"
+                        android:layout_marginEnd="15dp"
+                        android:background="@drawable/rounded_rectangle" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
+                        android:text="Near by"
+                        android:backgroundTint="@color/gray"
+                        android:alpha="0.6"
+                        android:textColor="@color/white"
+                        android:layout_marginEnd="15dp"
+                        android:background="@drawable/rounded_rectangle" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
+                        android:text="Popular"
+                        android:backgroundTint="@color/gray"
+                        android:alpha="0.6"
+                        android:textColor="@color/white"
+                        android:layout_marginEnd="15dp"
+                        android:background="@drawable/rounded_rectangle" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
+                        android:text="Parks"
+                        android:backgroundTint="@color/gray"
+                        android:alpha="0.6"
+                        android:textColor="@color/white"
+                        android:layout_marginEnd="15dp"
+                        android:background="@drawable/rounded_rectangle" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
+                        android:text="Beaches"
+                        android:backgroundTint="@color/gray"
+                        android:alpha="0.6"
+                        android:textColor="@color/white"
+                        android:layout_marginEnd="15dp"
+                        android:background="@drawable/rounded_rectangle" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
+                        android:text="Streets"
+                        android:backgroundTint="@color/gray"
+                        android:alpha="0.6"
+                        android:textColor="@color/white"
+                        android:layout_marginEnd="15dp"
+                        android:background="@drawable/rounded_rectangle" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
+                        android:text="Campuses"
+                        android:backgroundTint="@color/gray"
+                        android:alpha="0.6"
+                        android:textColor="@color/white"
+                        android:layout_marginEnd="15dp"
+                        android:background="@drawable/rounded_rectangle" />
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <TableLayout
+                android:id="@+id/dashboard_table_all_events_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="0,1"
+                android:orientation="horizontal"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dashboard_btn_event_list_filter">
+
+                <TableRow>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="220dp"
+                        android:layout_column="0"
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_columnWeight="1"
+                        app:cardCornerRadius="20dp">
+
+                        <androidx.constraintlayout.utils.widget.ImageFilterView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:adjustViewBounds="true"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/test" />
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="220dp"
+                        android:layout_column="1"
+                        app:cardCornerRadius="20dp">
+
+                        <androidx.constraintlayout.utils.widget.ImageFilterView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:adjustViewBounds="true"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/test" />
+                    </androidx.cardview.widget.CardView>
+                </TableRow>
+
+
+                <TableRow>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="150dp"
+                        android:layout_height="220dp"
+                        android:layout_column="0"
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginEnd="10dp"
+                        app:cardCornerRadius="20dp">
+
+                        <androidx.constraintlayout.utils.widget.ImageFilterView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:adjustViewBounds="true"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/test" />
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="150dp"
+                        android:layout_height="220dp"
+                        android:layout_column="0"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="15dp"
+                        app:cardCornerRadius="20dp">
+
+                        <androidx.constraintlayout.utils.widget.ImageFilterView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:adjustViewBounds="true"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/test" />
+                    </androidx.cardview.widget.CardView>
+                </TableRow>
+            </TableLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"
@@ -26,5 +408,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        android:layout_gravity="bottom"
         app:menu="@menu/bottom_nav_menu" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

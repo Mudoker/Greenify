@@ -12,11 +12,6 @@
         android:icon="@drawable/ic_notification" />
 
     <item
-        android:id="@+id/bottom_nav_search"
-        android:title="@string/search"
-        android:icon="@drawable/ic_search" />
-
-    <item
         android:id="@+id/bottom_nav_account"
         android:title="@string/account"
         android:icon="@drawable/ic_user" />
@@ -26,4 +21,8 @@
         android:title="@string/setting"
         android:icon="@drawable/ic_settings" />
 
+    <item
+        android:id="@+id/bottom_nav_about_us"
+        android:title="@string/about_us"
+        android:icon="@drawable/ic_info" />
 </menu>
