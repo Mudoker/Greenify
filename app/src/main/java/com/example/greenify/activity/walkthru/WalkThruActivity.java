@@ -3,12 +3,11 @@ package com.example.greenify.activity.walkthru;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Window;
-import android.view.WindowInsets;
-import android.view.WindowInsetsController;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.splashscreen.SplashScreen;
@@ -17,6 +16,11 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.greenify.R;
 import com.example.greenify.activity.main.MainActivity;
+import com.example.greenify.activity.test;
+import com.example.greenify.util.ApplicationUtils;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class WalkThruActivity extends AppCompatActivity {
 
@@ -39,16 +43,29 @@ public class WalkThruActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         SplashScreen.installSplashScreen(this);
 
-        Window window = getWindow();
-        WindowInsetsController insetsController = window.getInsetsController();
-        if (insetsController != null) {
-            // Hide system bars
-            insetsController.hide(WindowInsets.Type.systemBars());
-            // Set system bars behavior to default
-            insetsController.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
-        }
+        ApplicationUtils.configureWindowInsets(this);
 
         setContentView(R.layout.activity_walk_through);
+
+
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if (task.isSuccessful()) {
+                    String token = task.getResult();
+                    System.out.println("Token: " + token);
+                } else {
+                    System.out.println("Failed");
+                }
+            }
+        });
+
+
+        FirebaseMessaging.getInstance().subscribeToTopic("ABC").addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+            }
+        });
 
         backButton = findViewById(R.id.walk_thru_btn_back);
         nextButton = findViewById(R.id.walk_thru_btn_next);
@@ -62,6 +79,8 @@ public class WalkThruActivity extends AppCompatActivity {
         });
 
         nextButton.setOnClickListener(v -> {
+            ApplicationUtils.sendNotificationMessage("Hello 123", "Test 1");
+
             if (currentPageIndex < walkThruPagerAdapter.getItemCount() - 1) {
                 mWalkThruSliderViewPager.setCurrentItem(currentPageIndex + 1, true);
             } else {
@@ -71,7 +90,7 @@ public class WalkThruActivity extends AppCompatActivity {
         });
 
         skipButton.setOnClickListener(v -> {
-            startActivity(new Intent(this, MainActivity.class));
+            startActivity(new Intent(this, test.class));
             finish();
         });
 

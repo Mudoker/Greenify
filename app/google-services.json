@@ -12,7 +12,12 @@
           "package_name": "com.example.greenify"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1051231906448-cf5ngtab9vppqegou5jknjggq3rrne9f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCKC88uM955obLJLYceuHitVZfYZ8evtR8"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1051231906448-cf5ngtab9vppqegou5jknjggq3rrne9f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

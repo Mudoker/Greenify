@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -15,7 +16,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.utils.widget.ImageFilterView;
 
 import com.example.greenify.R;
+import com.example.greenify.activity.main.MainActivity;
 import com.example.greenify.util.ApplicationUtils;
+import com.example.greenify.util.NotificationHelper;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.Objects;
 
@@ -67,11 +71,29 @@ public class test extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
 
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w("TOKEN_F", "Fetching FCM registration token failed", task.getException());
+                        return;
+                    }
+
+                    // Get new FCM registration token
+                    String token = task.getResult();
+
+                    // Log and toast
+                    String msg = "User token" + token;
+                    Log.d("TOKEN_S", msg);
+                    Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+                });
+
         Button buttonSelectImg = findViewById(R.id.btn_select_img);
 
         buttonSelectImg.setOnClickListener((v) -> {
             ApplicationUtils.requestPermissions(this);
-            pickImageLauncher.launch("image/*");
+            NotificationHelper notificationHelper = ApplicationUtils.getNotificationHelper();
+            notificationHelper.sendNotification(this, R.drawable.greenify_app_logo, "1", "test", "hello", R.color.dark_blue, new MainActivity());
+//            pickImageLauncher.launch("image/*");
         });
 
         Button buttonOpenCamera = findViewById(R.id.btn_open_camera);
