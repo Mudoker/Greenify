@@ -4,13 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:mapbox="http://schemas.android.com/apk/res-auto"
     tools:context=".activity.map.MapActivity">
 
-    <com.mapbox.maps.MapView
+    <com.mapbox.mapboxsdk.maps.MapView
         android:id="@+id/map_mapView"
         android:layout_width="match_parent"
-        app:mapbox_locationComponentEnabled="true"
-        app:mapbox_locationComponentPuckBearing="heading"
+        mapbox:mapbox_cameraZoom="17"
+        mapbox:mapbox_cameraTargetLat="37.7749"
+        mapbox:mapbox_cameraTargetLng="-122.4194"
         android:layout_height="match_parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

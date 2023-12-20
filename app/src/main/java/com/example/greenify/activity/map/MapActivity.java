@@ -1,10 +1,10 @@
 package com.example.greenify.activity.map;
 
-import static com.mapbox.maps.plugin.gestures.GesturesUtils.getGestures;
-import static com.mapbox.maps.plugin.locationcomponent.LocationComponentUtils.getLocationComponent;
-
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -12,120 +12,193 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.example.greenify.R;
 import com.example.greenify.util.ApplicationUtils;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.mapbox.android.gestures.MoveGestureDetector;
-import com.mapbox.geojson.Point;
-import com.mapbox.maps.CameraOptions;
-import com.mapbox.maps.ImageHolder;
-import com.mapbox.maps.MapView;
-import com.mapbox.maps.MapboxMap;
-import com.mapbox.maps.Style;
-import com.mapbox.maps.plugin.LocationPuck2D;
-import com.mapbox.maps.plugin.gestures.OnMoveListener;
-import com.mapbox.maps.plugin.locationcomponent.LocationComponentPlugin;
-import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener;
-import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener;
+import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.location.LocationComponent;
+import com.mapbox.mapboxsdk.location.LocationComponentOptions;
+import com.mapbox.mapboxsdk.location.modes.CameraMode;
+import com.mapbox.mapboxsdk.maps.MapView;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.maps.Style;
 
-public class MapActivity extends AppCompatActivity {
-
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
+    private MapboxMap mapboxMap;
     private MapView mapView;
+    private Location currentUserLocation;
+    private MapThread mapThread;
 
-    FloatingActionButton btnMyLocation;
+    private boolean isMapRunning;
 
-    private final ActivityResultLauncher<String> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), o -> {
-        if (o) {
+    private static final int LOCATION_UPDATE_INTERVAL = 150; // Update interval in milliseconds
+
+    // Request permission
+    private final ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+        if (isGranted) {
+            getUserLocation();
+            enableLocationComponent(mapboxMap.getStyle());
             Toast.makeText(MapActivity.this, "Permission Granted!", Toast.LENGTH_SHORT).show();
         } else {
             ApplicationUtils.requestPermissions(MapActivity.this);
         }
     });
 
-    private final OnIndicatorBearingChangedListener onIndicatorBearingChangedListener = new OnIndicatorBearingChangedListener() {
-        @Override
-        public void onIndicatorBearingChanged(double v) {
-            mapView.getMapboxMap().setCamera(new CameraOptions.Builder().bearing(v).build());
-        }
-    };
-
-    private final OnIndicatorPositionChangedListener onIndicatorPositionChangedListener = new OnIndicatorPositionChangedListener() {
-        @Override
-        public void onIndicatorPositionChanged(@NonNull Point point) {
-            if (mapView != null) {
-                mapView.getMapboxMap();
-                mapView.getMapboxMap().setCamera(new CameraOptions.Builder().center(point).zoom(17.0).build());
-            }
-            getGestures(mapView).setFocalPoint(mapView.getMapboxMap().pixelForCoordinate(point));
-        }
-    };
-
-    private final OnMoveListener onMoveListener = new OnMoveListener() {
-        @Override
-        public void onMoveBegin(@NonNull MoveGestureDetector moveGestureDetector) {
-            getLocationComponent(mapView).removeOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener);
-            getLocationComponent(mapView).removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener);
-            getGestures(mapView).removeOnMoveListener(onMoveListener);
-            btnMyLocation.show();
-        }
-
-        @Override
-        public boolean onMove(@NonNull MoveGestureDetector moveGestureDetector) {
-            return false;
-        }
-
-        @Override
-        public void onMoveEnd(@NonNull MoveGestureDetector moveGestureDetector) {
-
-        }
-    };
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Init mapbox
+        Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
+
         setContentView(R.layout.activity_map);
 
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            activityResultLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
-        }
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            activityResultLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
-        }
-
         mapView = findViewById(R.id.map_mapView);
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
+    }
 
-        btnMyLocation = findViewById(R.id.map_btn_my_location);
+    @Override
+    public void onMapReady(@NonNull MapboxMap mapboxMap) {
+        this.mapboxMap = mapboxMap;
+        mapboxMap.setStyle(Style.MAPBOX_STREETS, this::enableLocationComponent);
+        mapboxMap.getUiSettings().setZoomGesturesEnabled(true);
+        mapboxMap.getUiSettings().setScrollGesturesEnabled(true);
+        mapboxMap.getUiSettings().setRotateGesturesEnabled(true);
+    }
 
-        MapboxMap mapboxMap = mapView.getMapboxMap();
+    private void enableLocationComponent(Style style) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+            return;
+        }
 
-        mapboxMap.loadStyleUri(Style.MAPBOX_STREETS, style -> {
-            Log.e("Map Loaded", "DONE");
-            mapboxMap.setCamera(new CameraOptions.Builder().zoom(17.0).build());
-            LocationComponentPlugin locationComponentPlugin = getLocationComponent(mapView);
-            locationComponentPlugin.setEnabled(true);
-            LocationPuck2D locationPuck2D = new LocationPuck2D();
-            ImageHolder imageHolder = ImageHolder.from(R.drawable.baseline_location_on_24);
-            locationPuck2D.setBearingImage(imageHolder);
-            locationPuck2D.setTopImage(imageHolder);
-            locationComponentPlugin.setLocationPuck(locationPuck2D);
-            locationComponentPlugin.addOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener);
-            locationComponentPlugin.addOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener);
+        LocationComponent locationComponent = mapboxMap.getLocationComponent();
 
-            getGestures(mapView).addOnMoveListener(onMoveListener);
+        try {
+            locationComponent.activateLocationComponent(this, style);
+            locationComponent.setLocationComponentEnabled(true);
+            locationComponent.setCameraMode(CameraMode.TRACKING_GPS);
 
-            btnMyLocation.setOnClickListener((v) -> {
-                locationComponentPlugin.addOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener);
-                locationComponentPlugin.addOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener);
-                getGestures(mapView).addOnMoveListener(onMoveListener);
+            LocationComponentOptions locationComponentOptions =
+                    LocationComponentOptions.builder(this)
+                            .elevation(5f)
+                            .accuracyAlpha(0.6f)
+                            .pulseEnabled(true)
+                            .pulseMaxRadius(20)
+                            .foregroundDrawable(R.drawable.baseline_location_on_48)
+                            .build();
 
-                btnMyLocation.hide();
-            });
-        });
+            locationComponent.applyStyle(locationComponentOptions);
+            getUserLocation(); // Fetch initial user location
+            startMapThread(); // Start updating the map based on user location
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void getUserLocation() {
+        UserLocationListener userLocationListener = new UserLocationListener();
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        ApplicationUtils.checkLocationPermission(this);
+
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_UPDATE_INTERVAL, 3f, userLocationListener);
+    }
+
+    private void startMapThread() {
+        if (mapThread == null) {
+            mapThread = new MapThread();
+            mapThread.start();
+        }
+    }
+
+    private class MapThread extends Thread {
+        @Override
+        public void run() {
+            while (isMapRunning) {
+                try {
+                    if (currentUserLocation != null) {
+                        runOnUiThread(() -> updateMap(currentUserLocation));
+                    }
+
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void updateMap(Location location) {
+        if (location.distanceTo(currentUserLocation) != 0) {
+            currentUserLocation = location;
+            mapboxMap.clear();
+
+            CameraPosition position = new CameraPosition.Builder()
+                    .target(new LatLng(currentUserLocation.getLatitude(), currentUserLocation.getLongitude()))
+                    .zoom(17)
+                    .build();
+
+            Log.e("New Position", String.valueOf(currentUserLocation));
+            mapboxMap.setCameraPosition(position);
+        }
+    }
+
+    public class UserLocationListener implements LocationListener {
+        @Override
+        public void onLocationChanged(@NonNull Location location) {
+            currentUserLocation = location;
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mapView.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mapView.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mapView.onStop();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
     }
 }

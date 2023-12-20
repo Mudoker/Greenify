@@ -54,5 +54,8 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation("androidx.core:core-splashscreen:1.1.0-alpha02")
-    implementation("com.mapbox.maps:android:11.0.0")
+
+    implementation("com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.5.0")
+    implementation("com.mapbox.mapboxsdk:mapbox-android-sdk:9.2.0")
+
 }
