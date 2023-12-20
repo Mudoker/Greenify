@@ -7,7 +7,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.splashscreen.SplashScreen;
@@ -16,10 +15,8 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.greenify.R;
 import com.example.greenify.activity.main.MainActivity;
-import com.example.greenify.activity.test;
+import com.example.greenify.activity.map.MapActivity;
 import com.example.greenify.util.ApplicationUtils;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 public class WalkThruActivity extends AppCompatActivity {
@@ -48,23 +45,17 @@ public class WalkThruActivity extends AppCompatActivity {
         setContentView(R.layout.activity_walk_through);
 
 
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
-            @Override
-            public void onComplete(@NonNull Task<String> task) {
-                if (task.isSuccessful()) {
-                    String token = task.getResult();
-                    System.out.println("Token: " + token);
-                } else {
-                    System.out.println("Failed");
-                }
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                String token = task.getResult();
+                System.out.println("Token: " + token);
+            } else {
+                System.out.println("Failed");
             }
         });
 
 
-        FirebaseMessaging.getInstance().subscribeToTopic("ABC").addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-            }
+        FirebaseMessaging.getInstance().subscribeToTopic("ABC").addOnCompleteListener(task -> {
         });
 
         backButton = findViewById(R.id.walk_thru_btn_back);
@@ -79,7 +70,7 @@ public class WalkThruActivity extends AppCompatActivity {
         });
 
         nextButton.setOnClickListener(v -> {
-            ApplicationUtils.sendNotificationMessage("Hello 123", "Test 1");
+            ApplicationUtils.sendNotificationMessage("Hello 123", "Test 1", "123");
 
             if (currentPageIndex < walkThruPagerAdapter.getItemCount() - 1) {
                 mWalkThruSliderViewPager.setCurrentItem(currentPageIndex + 1, true);
@@ -90,7 +81,7 @@ public class WalkThruActivity extends AppCompatActivity {
         });
 
         skipButton.setOnClickListener(v -> {
-            startActivity(new Intent(this, test.class));
+            startActivity(new Intent(this, MapActivity.class));
             finish();
         });
 

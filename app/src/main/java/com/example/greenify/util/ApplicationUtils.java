@@ -72,6 +72,11 @@ public class ApplicationUtils {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
             }
+
+            // Check if location permission is granted
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+            }
         }
     }
 
@@ -167,9 +172,9 @@ public class ApplicationUtils {
         }
     }
 
-    public static void sendNotificationMessage(String title, String body) {
+    public static void sendNotificationMessage(String token, String title, String body) {
         FutureTask<Void> futureTask = new FutureTask<>(() -> {
-            sendNotificationInBackground(title, body);
+            sendNotificationInBackground(token, title, body);
             return null;
         });
 
@@ -185,8 +190,7 @@ public class ApplicationUtils {
         }
     }
 
-    private static void sendNotificationInBackground(String title, String body) {
-        String receiverToken = "dJlyFqfKTcuKJtrsSL-622:APA91bHJpD4YwWHYIVdfhx8HB0ODCtN-iGgWUymoHTJ8t9xLTcRElOw0LTGIp4JOypgWQcrS2nYPV4yW5lEtSt2k-MbWfW6XEIquUpK1fQ7ShU4Evg7c4okr8j9-rX-xnVY97_QaONCE";
+    private static void sendNotificationInBackground(String token, String title, String body) {
         String serverToken = "AAAA9MJN6pA:APA91bHI4l-Empmev0WUbAIjYtjn_uNT7ufcogdHVNOzIggKYwxN9opnX4iY2ADm-EWAXGrA4UJmTM2KMOcuKeWIvWQbEWrOCpMqVDHJ47WYus62uCPobv7C38IABtmZIV0pAHkB0ZYD";
 
         try {
@@ -197,15 +201,11 @@ public class ApplicationUtils {
 
             jsonObjectNotification.put("title", title);
             jsonObjectNotification.put("body", body);
-            jsonObject.put("to", receiverToken);
+            jsonObject.put("to", token);
             jsonObject.put("notification", jsonObjectNotification);
 
             RequestBody requestBody = RequestBody.create(mediaType, jsonObject.toString());
-            Request request = new Request.Builder().url("https://fcm.googleapis.com/fcm/send")
-                    .post(requestBody)
-                    .addHeader("Authorization", "key=" + serverToken)
-                    .addHeader("Content-Type", "application/json")
-                    .build();
+            Request request = new Request.Builder().url("https://fcm.googleapis.com/fcm/send").post(requestBody).addHeader("Authorization", "key=" + serverToken).addHeader("Content-Type", "application/json").build();
 
             Response response = okHttpClient.newCall(request).execute();
 
