@@ -12,6 +12,8 @@ public class Environment {
 
     private static final String EMAIL_REGEX = "^[\\w.-]+@([\\w-]+\\.)+[\\w-]{2,4}$";
 
+    private static final Double CURRENT_LAT = 10.786681285439995;
+    private static final Double CURRENT_LNG = 106.66486459714488;
 
     public static String getSupportEmail() {
         return SUPPORT_EMAIL;
@@ -35,6 +37,14 @@ public class Environment {
 
     public static String getEmailRegex() {
         return EMAIL_REGEX;
+    }
+
+    public static Double getCurrentLat() {
+        return CURRENT_LAT;
+    }
+
+    public static Double getCurrentLng() {
+        return CURRENT_LNG;
     }
 }
 

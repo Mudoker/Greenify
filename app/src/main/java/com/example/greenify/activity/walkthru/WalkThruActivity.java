@@ -15,7 +15,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.greenify.R;
 import com.example.greenify.activity.main.MainActivity;
-import com.example.greenify.activity.map.MapActivity;
+import com.example.greenify.activity.map.MapBoxActivity;
 import com.example.greenify.util.ApplicationUtils;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -81,7 +81,7 @@ public class WalkThruActivity extends AppCompatActivity {
         });
 
         skipButton.setOnClickListener(v -> {
-            startActivity(new Intent(this, MapActivity.class));
+            startActivity(new Intent(this, MapBoxActivity.class));
             finish();
         });
 

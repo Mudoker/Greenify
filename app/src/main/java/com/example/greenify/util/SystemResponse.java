@@ -26,4 +26,9 @@ public class SystemResponse {
     public String getSendToMailBox() {
         return "Please check your mailbox";
     }
+
+    public String mapLoadFail() {
+        return "Failed to load map";
+    }
+
 }
