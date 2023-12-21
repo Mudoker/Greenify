@@ -18,6 +18,13 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    configurations {
+        all {
+            resolutionStrategy {
+                force("com.squareup.okhttp3:okhttp:4.12.0")
+            }
+        }
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -28,9 +35,14 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
     buildFeatures {
         viewBinding = true
     }
@@ -55,5 +67,14 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation("androidx.core:core-splashscreen:1.1.0-alpha02")
-    implementation("com.mapbox.maps:android:11.0.0")
+
+
+    implementation("com.mapbox.maps:android:10.10.0")
+    implementation("com.mapbox.navigation:android:2.17.8")
+
+//    implementation("com.mapbox.navigation:android:2.17.8")
+//    {
+//        exclude(group = "com.mapbox.common", module = "okhttp")
+//    }
+
 }

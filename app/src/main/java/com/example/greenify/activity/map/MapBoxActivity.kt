@@ -5,11 +5,12 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,20 +24,22 @@ import com.example.greenify.util.ApplicationUtils
 import com.example.greenify.util.Environment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.JsonObject
+import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.Style
-import com.mapbox.maps.plugin.PuckBearing
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
+import com.mapbox.maps.plugin.gestures.OnMoveListener
+import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
-import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.plugin.viewport.viewport
 
@@ -48,6 +51,9 @@ class MapBoxActivity : AppCompatActivity() {
 
     // Response Code
     private val systemResponse = Environment.getSystemResponse()
+
+    // Annotation Id
+    private var annotationId = "123"
 
     // User location
     private var userLocation: Point =
@@ -66,22 +72,41 @@ class MapBoxActivity : AppCompatActivity() {
 
     // Listener
     private val onIndicatorBearingChangedListener = OnIndicatorBearingChangedListener { bearing ->
-        mapView.mapboxMap.setCamera(CameraOptions.Builder().bearing(bearing).build())
+        mapView.getMapboxMap().setCamera(CameraOptions.Builder().bearing(bearing).build())
     }
 
     private val onIndicatorPositionChangedListener =
         OnIndicatorPositionChangedListener { point ->
             userLocation = point
 
-            mapView.mapboxMap.setCamera(
+            mapView.getMapboxMap().setCamera(
                 CameraOptions.Builder()
                     .center(point)
                     .zoom(17.0)
                     .build()
             )
-
-            navigateCamera(userLocation)
         }
+
+    private val onMoveListener: OnMoveListener = object : OnMoveListener {
+        override fun onMoveBegin(detector: MoveGestureDetector) {
+            mapView.location.removeOnIndicatorBearingChangedListener(
+                onIndicatorBearingChangedListener
+            )
+            mapView.location.removeOnIndicatorPositionChangedListener(
+                onIndicatorPositionChangedListener
+            )
+            mapView.gestures.removeOnMoveListener(this)
+        }
+
+        override fun onMove(detector: MoveGestureDetector): Boolean {
+            return false
+        }
+
+        override fun onMoveEnd(detector: MoveGestureDetector) {}
+    }
+
+    // Update marker
+    private lateinit var pointAnnotationManager: PointAnnotationManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -119,30 +144,68 @@ class MapBoxActivity : AppCompatActivity() {
             navigateCamera(userLocation)
         }
 
+        // Add location
+        val btnAddLocation: Button = findViewById(R.id.btn_add_location)
+
+        btnAddLocation.setOnClickListener {
+            addPointAnnotationToMap(
+                Point.fromLngLat(
+                    106.6648324106366,
+                    10.785226863255026
+                )
+            )
+        }
+
+        // Update location
+        val btnUpdateLocation: Button = findViewById(R.id.btn_update_location)
+        btnUpdateLocation.setOnClickListener {
+            updatePointAnnotationLocation(
+                annotationId, Point.fromLngLat(
+                    Environment.getCurrentLng(),
+                    Environment.getCurrentLat()
+                )
+            )
+        }
+
         mapView = findViewById(R.id.mapView)
 
-        mapBoxMap = mapView.mapboxMap
+        mapBoxMap = mapView.getMapboxMap()
 
-        mapBoxMap.loadStyle(Style.MAPBOX_STREETS) {
-            if (it.isStyleLoaded()) {
+        // CRUD Markers
+        val annotationApi = mapView.annotations
+        pointAnnotationManager = annotationApi.createPointAnnotationManager()
+
+        mapBoxMap.loadStyleUri(Style.MAPBOX_STREETS) {
+            if (it.isStyleLoaded) {
                 navigateCamera(userLocation)
             } else {
                 Toast.makeText(this, systemResponse.mapLoadFail(), Toast.LENGTH_SHORT).show()
             }
         }
 
-        with(mapView) {
-            location.locationPuck = createDefault2DPuck(withBearing = true)
-            location.enabled = true
-            location.puckBearing = PuckBearing.COURSE
 
-            location.addOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
-            location.addOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
+        // User location puck
+        with(mapView) {
+            location.apply {
+                enabled = true
+                pulsingEnabled = true // Enable pulsing animation for the location puck
+                pulsingColor = Color.BLUE // Set the pulsing color (optional)
+                pulsingMaxRadius = 10f // Set the maximum radius of pulsing animation (optional)
+                addOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
+                addOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
+            }
+
+            gestures.addOnMoveListener(onMoveListener)
+
             viewport.transitionTo(
                 targetState = viewport.makeFollowPuckViewportState(),
                 transition = viewport.makeImmediateViewportTransition()
             )
         }
+
+        // Request route
+//        val btnRequestDirection: CardView = findViewById(R.id.map_direction)
+
     }
 
     private fun navigateCamera(point: Point) {
@@ -156,21 +219,7 @@ class MapBoxActivity : AppCompatActivity() {
 
         val cameraAnimationOptions = MapAnimationOptions.Builder().duration(1000).build()
 
-        mapView.mapboxMap.flyTo(cameraOptions, cameraAnimationOptions)
-
-        addPointAnnotationToMap(
-            Point.fromLngLat(
-                Environment.getCurrentLng(),
-                Environment.getCurrentLat()
-            )
-        )
-
-        addPointAnnotationToMap(
-            Point.fromLngLat(
-                106.6648324106366,
-                10.785226863255026
-            )
-        )
+        mapView.getMapboxMap().flyTo(cameraOptions, cameraAnimationOptions)
     }
 
     // Adds a marker to the map with coordinates
@@ -183,10 +232,6 @@ class MapBoxActivity : AppCompatActivity() {
 
         // If bitmap creation is successful
         locationIconBitmap?.let {
-            val annotationApi = mapView.annotations
-
-            val pointAnnotationManager = annotationApi.createPointAnnotationManager()
-
             val annotationIdJsonObject = JsonObject()
             annotationIdJsonObject.addProperty("id", 123)
 
@@ -195,16 +240,29 @@ class MapBoxActivity : AppCompatActivity() {
                 .withIconImage(it)
                 .withData(annotationIdJsonObject)
 
-            pointAnnotationManager.addClickListener { annotation ->
-                val annotationLocation = annotation.getData()
-
+            pointAnnotationManager.addClickListener {
                 mapMiniView.visibility = View.VISIBLE
 
-                Log.e("Clicked Annotation", annotationLocation.toString())
                 return@addClickListener true
             }
 
             pointAnnotationManager.create(pointAnnotationOptions)
+        }
+    }
+
+
+    private fun updatePointAnnotationLocation(annotationId: String, newPoint: Point) {
+        // Find the annotation with the given ID
+        val annotationToDelete = pointAnnotationManager.annotations.firstOrNull {
+            val annotationData = it.getData()?.asJsonObject
+            val id = annotationData?.get("id")?.asString
+            id == annotationId
+        }
+
+        // If the annotation is found, delete it
+        annotationToDelete?.let {
+            pointAnnotationManager.delete(it)
+            addPointAnnotationToMap(newPoint)
         }
     }
 
