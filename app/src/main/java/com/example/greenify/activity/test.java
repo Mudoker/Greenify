@@ -29,6 +29,7 @@ public class test extends AppCompatActivity {
         if (uri != null) {
             ImageFilterView imageFilterView = findViewById(R.id.img_selected);
             imageFilterView.setImageURI(uri);
+            
         }
     });
 

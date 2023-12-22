@@ -607,6 +607,5 @@ class MapBoxActivity : AppCompatActivity() {
         mapBoxNavigation.unregisterRoutesObserver(routesObserver)
         mapBoxNavigation.unregisterLocationObserver(locationObserver)
         mapBoxNavigation.onDestroy()
-
     }
 }
