@@ -11,8 +11,12 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.greenify.R;
+import com.example.greenify.model.SettingModel;
+import com.example.greenify.model.UserModel;
 import com.example.greenify.util.ApplicationUtils;
 import com.example.greenify.util.Environment;
+import com.example.greenify.util.FirebaseAPIs;
+import com.example.greenify.util.FirebaseCallback;
 import com.example.greenify.util.SystemResponse;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -23,6 +27,9 @@ import java.util.Objects;
 public class SignUpActivity extends AppCompatActivity {
 
     private final SystemResponse SYSTEM_RESPONSE = Environment.getSystemResponse();
+
+    // APIs
+    private final FirebaseAPIs firebaseAPIs = new FirebaseAPIs();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,17 +81,40 @@ public class SignUpActivity extends AppCompatActivity {
                 return;
             }
 
-            if (password.length() <= 6) {
+            if (password.length() < 6) {
                 userPassword.setError("Must be at least 6 characters");
                 return;
             }
 
             firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    Log.d("REGISTER_S", "createUserWithEmail:success");
-                    ApplicationUtils.showDialog(SignUpActivity.this, "System Alert", "Register Successfully");
+                    UserModel user = new UserModel(username, email, Environment.getDeviceToken());
+                    SettingModel settingModel = new SettingModel(user.getId(), 0, true, "m", 17.0);
+
+                    firebaseAPIs.storeUserData(user, new FirebaseCallback() {
+                        @Override
+                        public void onSuccess(boolean success) {
+                            ApplicationUtils.showDialog(SignUpActivity.this, "System Alert", "Event Created Successfully");
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            ApplicationUtils.showDialog(SignUpActivity.this, "System Alert", Environment.getSystemResponse().getBAD_REQUEST());
+                        }
+                    });
+
+                    firebaseAPIs.storeSettingModelData(settingModel, new FirebaseCallback() {
+                        @Override
+                        public void onSuccess(boolean success) {
+                            Log.d("Initialize Setting", "Success");
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            Log.e("Initialize Setting", String.valueOf(e));
+                        }
+                    });
                 } else {
-                    Log.w("REGISTER_F", "createUserWithEmail:failure", task.getException());
                     ApplicationUtils.showDialog(SignUpActivity.this, "System Alert", SYSTEM_RESPONSE.getBAD_REQUEST());
                 }
             });

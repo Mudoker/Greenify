@@ -14,9 +14,10 @@ import androidx.core.text.HtmlCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.greenify.R;
+import com.example.greenify.activity.adapter.WalkThruPagerAdapter;
 import com.example.greenify.activity.main.MainActivity;
-import com.example.greenify.activity.map.MapBoxActivity;
 import com.example.greenify.util.ApplicationUtils;
+import com.example.greenify.util.Environment;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 public class WalkThruActivity extends AppCompatActivity {
@@ -48,14 +49,11 @@ public class WalkThruActivity extends AppCompatActivity {
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 String token = task.getResult();
+                Environment.setDeviceToken(token);
                 System.out.println("Token: " + token);
             } else {
                 System.out.println("Failed");
             }
-        });
-
-
-        FirebaseMessaging.getInstance().subscribeToTopic("ABC").addOnCompleteListener(task -> {
         });
 
         backButton = findViewById(R.id.walk_thru_btn_back);
@@ -81,7 +79,7 @@ public class WalkThruActivity extends AppCompatActivity {
         });
 
         skipButton.setOnClickListener(v -> {
-            startActivity(new Intent(this, MapBoxActivity.class));
+            startActivity(new Intent(this, MainActivity.class));
             finish();
         });
 

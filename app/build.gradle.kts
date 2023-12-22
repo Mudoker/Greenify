@@ -51,10 +51,16 @@ android {
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
     implementation("androidx.appcompat:appcompat:1.6.1")
+
+    // Firebase
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-messaging")
+
+    // Https Request
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+    // Others
     implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
@@ -69,12 +75,8 @@ dependencies {
     implementation("androidx.core:core-splashscreen:1.1.0-alpha02")
 
 
+    // Mapbox
     implementation("com.mapbox.maps:android:10.10.0")
     implementation("com.mapbox.navigation:android:2.17.8")
     implementation("com.mapbox.navigation:ui-dropin:2.17.8")
-//    implementation("com.mapbox.navigation:ui:1.5.1")
-//    {
-//        exclude(group = "com.mapbox.common", module = "okhttp")
-//    }
-
 }

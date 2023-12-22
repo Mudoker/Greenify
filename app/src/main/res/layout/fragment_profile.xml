@@ -229,57 +229,14 @@
                 android:layout_marginEnd="20dp"
                 android:textStyle="bold" />
 
-            <HorizontalScrollView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/profile_list_host_event"
-                app:layout_constraintTop_toBottomOf="@id/profile_txt_host_event"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/profile_txt_host_event"
                 android:scrollbars="none"
-                android:visibility="gone"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:id="@+id/profile_list_host_event_layout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <!-- First CardView -->
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="180dp"
-                        android:layout_height="80dp"
-                        app:cardCornerRadius="20dp"
-                        android:clickable="true"
-                        android:alpha="0.85"
-                        android:layout_margin="16dp">
-
-                        <androidx.constraintlayout.utils.widget.ImageFilterView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/test" />
-
-                    </androidx.cardview.widget.CardView>
-
-                    <!-- First CardView -->
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="180dp"
-                        android:layout_height="80dp"
-                        app:cardCornerRadius="20dp"
-                        android:clickable="true"
-                        android:backgroundTint="@color/white"
-                        android:alpha="0.85"
-                        android:layout_margin="16dp">
-
-                        <androidx.constraintlayout.utils.widget.ImageFilterView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/test" />
-
-                    </androidx.cardview.widget.CardView>
-
-                </LinearLayout>
-            </HorizontalScrollView>
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/profile_txt_enroll_event"
@@ -310,54 +267,14 @@
                 android:layout_marginEnd="20dp"
                 android:textStyle="bold" />
 
-            <HorizontalScrollView
-                android:id="@+id/profile_list_enroll_event"
-                app:layout_constraintTop_toBottomOf="@id/profile_txt_enroll_event"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/profile_list_enrol_event"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/profile_txt_enroll_event"
                 android:scrollbars="none"
-                android:visibility="gone"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="180dp"
-                        android:layout_height="80dp"
-                        app:cardCornerRadius="20dp"
-                        android:clickable="true"
-                        android:alpha="0.85"
-                        android:backgroundTint="@color/white"
-                        android:layout_margin="16dp">
-
-                        <androidx.constraintlayout.utils.widget.ImageFilterView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/test" />
-
-                    </androidx.cardview.widget.CardView>
-
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="180dp"
-                        android:layout_height="80dp"
-                        app:cardCornerRadius="20dp"
-                        android:clickable="true"
-                        android:backgroundTint="@color/white"
-                        android:alpha="0.85"
-                        android:layout_margin="16dp">
-
-                        <androidx.constraintlayout.utils.widget.ImageFilterView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/test" />
-
-                    </androidx.cardview.widget.CardView>
-                </LinearLayout>
-            </HorizontalScrollView>
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/profile_txt_recent_act"
@@ -368,7 +285,7 @@
                 android:textSize="28sp"
                 android:fontFamily="@font/nunito_sans"
                 android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/profile_list_enroll_event"
+                app:layout_constraintTop_toBottomOf="@id/profile_list_enrol_event"
                 app:layout_constraintLeft_toLeftOf="parent"
                 android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="10dp"

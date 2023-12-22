@@ -64,6 +64,7 @@
                 android:layout_height="160dp"
                 android:layout_marginBottom="-70dp"
                 android:layout_marginEnd="20dp"
+                android:clickable="true"
                 app:layout_constraintRight_toRightOf="parent"
                 app:shapeAppearanceOverlay="@style/circularImageViewShape"
                 android:src="@drawable/test"
@@ -127,16 +128,68 @@
                 android:gravity="top" />
 
             <TextView
-                android:id="@+id/txt_event_address"
+                android:id="@+id/txt_event_category"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Address"
+                android:text="Category"
                 app:layout_constraintTop_toBottomOf="@id/edt_event_des"
                 android:textColor="@color/white"
                 android:textSize="26sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="40dp" />
+
+            <RadioGroup
+                android:id="@+id/radio_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/txt_event_category"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/radio_park"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:buttonTint="@color/white"
+                    android:textSize="23sp"
+                    android:checked="true"
+                    android:layout_marginEnd="20dp"
+                    android:text="Park" />
+
+                <RadioButton
+                    android:id="@+id/radio_beach"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:buttonTint="@color/white"
+                    android:textSize="23sp"
+                    android:layout_marginEnd="20dp"
+                    android:text="Beach" />
+
+                <RadioButton
+                    android:id="@+id/radio_street"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:buttonTint="@color/white"
+                    android:textSize="23sp"
+                    android:text="Street" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/txt_event_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Address"
+                app:layout_constraintTop_toBottomOf="@id/radio_group"
+                android:textColor="@color/white"
+                android:textSize="26sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="30dp" />
 
             <EditText
                 android:id="@+id/edt_event_address"
@@ -214,6 +267,7 @@
                 android:backgroundTint="@color/light_green_1"
                 android:background="@drawable/rounded_rectangle"
                 android:text="Create"
+                android:textStyle="bold"
                 android:textSize="20sp"
                 android:fontFamily="@font/nunito_sans" />
 

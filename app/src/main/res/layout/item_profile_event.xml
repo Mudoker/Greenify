@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_host_event_card_view"
+    android:layout_width="180dp"
+    android:layout_height="80dp"
+    app:cardCornerRadius="20dp"
+    android:clickable="true"
+    android:alpha="0.85"
+    android:layout_margin="16dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.utils.widget.ImageFilterView
+        android:id="@+id/item_host_event_img"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/test" />
+
+</androidx.cardview.widget.CardView>

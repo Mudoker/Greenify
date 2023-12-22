@@ -1,32 +1,28 @@
 package com.example.greenify.model;
 
-import android.location.Location;
-
 import java.util.ArrayList;
 import java.util.UUID;
 
 public class EventModel {
-    private final UUID id;
+    private UUID id;
     private String title;
     private String description;
-    private Location location;
+    private String location;
 
-    private UUID ownerId;
+    private final UUID ownerId;
     private ArrayList<UUID> participants;
 
     private String category;
-    private Double point;
 
     private Boolean status;
 
-    public EventModel(String title, String description, Location location, UUID ownerId, String category, Double point) {
+    public EventModel(String title, String description, String location, UUID ownerId, String category) {
         this.id = UUID.randomUUID();
         this.title = title;
         this.description = description;
         this.location = location;
         this.ownerId = ownerId;
         this.category = category;
-        this.point = point;
         status = true;
     }
 
@@ -50,20 +46,16 @@ public class EventModel {
         this.description = description;
     }
 
-    public Location getLocation() {
+    public String getLocation() {
         return location;
     }
 
-    public void setLocation(Location location) {
+    public void setLocation(String location) {
         this.location = location;
     }
 
     public UUID getOwnerId() {
         return ownerId;
-    }
-
-    public void setOwnerId(UUID ownerId) {
-        this.ownerId = ownerId;
     }
 
     public ArrayList<UUID> getParticipants() {
@@ -87,11 +79,7 @@ public class EventModel {
     }
 
     public Double getPoint() {
-        return point;
-    }
-
-    public void setPoint(Double point) {
-        this.point = point;
+        return 100.0;
     }
 
     public Boolean getStatus() {
@@ -100,5 +88,9 @@ public class EventModel {
 
     public void setStatus(Boolean status) {
         this.status = status;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 }

@@ -1,4 +1,4 @@
-package com.example.greenify.activity.walkthru;
+package com.example.greenify.activity.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;

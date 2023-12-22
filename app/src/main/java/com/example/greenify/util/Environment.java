@@ -2,6 +2,7 @@ package com.example.greenify.util;
 
 public class Environment {
     private static final String SUPPORT_EMAIL = "huuquoc7603@gmail.com";
+    private static String DEVICE_TOKEN = "";
     private static final SystemResponse SYSTEM_RESPONSE = new SystemResponse();
 
     private static final int CORNER_RADIUS = 20;
@@ -45,6 +46,14 @@ public class Environment {
 
     public static Double getCurrentLng() {
         return CURRENT_LNG;
+    }
+
+    public static String getDeviceToken() {
+        return DEVICE_TOKEN;
+    }
+
+    public static void setDeviceToken(String token) {
+        DEVICE_TOKEN = token;
     }
 }
 
