@@ -71,8 +71,8 @@ dependencies {
 
     implementation("com.mapbox.maps:android:10.10.0")
     implementation("com.mapbox.navigation:android:2.17.8")
-
-//    implementation("com.mapbox.navigation:android:2.17.8")
+    implementation("com.mapbox.navigation:ui-dropin:2.17.8")
+//    implementation("com.mapbox.navigation:ui:1.5.1")
 //    {
 //        exclude(group = "com.mapbox.common", module = "okhttp")
 //    }
