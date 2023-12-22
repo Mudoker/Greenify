@@ -2,6 +2,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:background="@color/dark_blue"
     android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -111,7 +112,7 @@
                             android:id="@+id/profile_txt_user_total_act_num"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/_999"
+                            android:text="0"
                             android:fontFamily="@font/nunito_sans"
                             android:textColor="@color/white"
                             android:textSize="26sp"
@@ -145,7 +146,7 @@
                             android:id="@+id/profile_txt_user_total_point_num"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/_1307"
+                            android:text="0"
                             android:fontFamily="@font/nunito_sans"
                             android:textColor="@color/white"
                             android:textSize="26sp"
@@ -179,7 +180,7 @@
                             android:id="@+id/profile_txt_user_total_host_num"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/_999"
+                            android:text="0"
                             android:textColor="@color/white"
                             android:textSize="26sp"
                             android:fontFamily="@font/nunito_sans"
@@ -214,11 +215,26 @@
                 android:layout_marginTop="30dp"
                 android:alpha="0.8" />
 
+            <TextView
+                android:id="@+id/profile_txt_host_empty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nothing_to_show"
+                app:layout_constraintTop_toTopOf="@id/profile_txt_host_event"
+                app:layout_constraintBottom_toBottomOf="@id/profile_txt_host_event"
+                app:layout_constraintRight_toRightOf="parent"
+                android:textColor="@color/white_50"
+                android:fontFamily="@font/nunito_sans"
+                android:textSize="20sp"
+                android:layout_marginEnd="20dp"
+                android:textStyle="bold" />
+
             <HorizontalScrollView
                 android:id="@+id/profile_list_host_event"
                 app:layout_constraintTop_toBottomOf="@id/profile_txt_host_event"
                 android:layout_width="match_parent"
                 android:scrollbars="none"
+                android:visibility="gone"
                 android:layout_height="wrap_content">
 
                 <LinearLayout
@@ -280,11 +296,26 @@
                 android:layout_marginTop="10dp"
                 android:alpha="0.8" />
 
+            <TextView
+                android:id="@+id/profile_txt_enrol_empty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nothing_to_show"
+                app:layout_constraintTop_toTopOf="@id/profile_txt_enroll_event"
+                app:layout_constraintBottom_toBottomOf="@id/profile_txt_enroll_event"
+                app:layout_constraintRight_toRightOf="parent"
+                android:textColor="@color/white_50"
+                android:fontFamily="@font/nunito_sans"
+                android:textSize="20sp"
+                android:layout_marginEnd="20dp"
+                android:textStyle="bold" />
+
             <HorizontalScrollView
                 android:id="@+id/profile_list_enroll_event"
                 app:layout_constraintTop_toBottomOf="@id/profile_txt_enroll_event"
                 android:layout_width="match_parent"
                 android:scrollbars="none"
+                android:visibility="gone"
                 android:layout_height="wrap_content">
 
                 <LinearLayout
@@ -343,12 +374,28 @@
                 android:layout_marginTop="10dp"
                 android:alpha="0.8" />
 
+            <TextView
+                android:id="@+id/profile_txt_recent_act_empty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nothing_to_show"
+                app:layout_constraintTop_toBottomOf="@id/profile_txt_recent_act"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginTop="30dp"
+                android:textColor="@color/white_50"
+                android:fontFamily="@font/nunito_sans"
+                android:textSize="20sp"
+                android:layout_marginEnd="20dp"
+                android:textStyle="bold" />
+
             <LinearLayout
                 android:id="@+id/profile_recent_act_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="20dp"
+                android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/profile_txt_recent_act"
                 android:orientation="vertical">
 
