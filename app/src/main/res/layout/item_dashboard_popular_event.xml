@@ -4,7 +4,8 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:layout_margin="16dp"
+    android:layout_marginEnd="16dp"
+    android:clickable="true"
     android:background="@color/dark_blue"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 

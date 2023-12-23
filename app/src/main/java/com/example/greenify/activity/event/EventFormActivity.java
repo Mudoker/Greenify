@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -26,6 +28,7 @@ import com.example.greenify.util.FirebaseCallback;
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class EventFormActivity extends AppCompatActivity {
@@ -118,6 +121,45 @@ public class EventFormActivity extends AppCompatActivity {
 
         btnCreate = findViewById(R.id.btn_event_create);
 
+        long leastSignificantBits = -5900290714976977000L;
+        long mostSignificantBits = 3859586160199747000L;
+
+        UUID retrievedUUID = new UUID(mostSignificantBits, leastSignificantBits);
+
+//        EventModel[] eventModel = {null};
+//
+//        btnCreate.setOnClickListener(v -> {
+//            firebaseAPIs.getEventsData(UUID.fromString("d0f767a1-7cca-40a3-b123-80ad1988f14d"), eventModels -> {
+//                if (!eventModels.isEmpty()) {
+//                    Log.e("Retrieve Event Data", eventModels.get(0).getCategory());
+//                    eventModel[0] = eventModels.get(0);
+//                    // Handle other operations with eventModels...
+//                    eventModel[0].setCategory("Street");
+//                    firebaseAPIs.updateEventData(eventModel[0], new FirebaseCallback() {
+//                        @Override
+//                        public void onSuccess(boolean success) {
+//
+//                        }
+//
+//                        @Override
+//                        public void onSuccess(Uri uri) {
+//
+//                        }
+//
+//                        @Override
+//                        public void onFailure(Exception e) {
+//
+//                        }
+//                    });
+//                } else {
+//                    Log.e("Retrieve Event Data", "No events found.");
+//                }
+//            }, e -> {
+//                // Handle failure...
+//            });
+//        });
+
+
         btnCreate.setOnClickListener(v -> {
             // Validate event title
             String title = eventTitle.getText().toString().trim();
@@ -179,7 +221,7 @@ public class EventFormActivity extends AppCompatActivity {
 
             String location = address + " " + city + " " + zipCode;
 
-            EventModel eventModel = new EventModel(title, description, location, UserModel.getUserSingleTon().getId(), selectedEventCategory.toString());
+            EventModel eventModel = new EventModel(title, description, location, UUID.randomUUID(), selectedEventCategory.toString());
 
             firebaseAPIs.storeEventData(eventModel, new FirebaseCallback() {
                 @Override
@@ -188,11 +230,51 @@ public class EventFormActivity extends AppCompatActivity {
                 }
 
                 @Override
+                public void onSuccess(Uri uri) {
+                }
+
+                @Override
                 public void onFailure(Exception e) {
                     ApplicationUtils.showDialog(EventFormActivity.this, "System Alert", Environment.getSystemResponse().getBAD_REQUEST());
                 }
             });
 
+
+            UserModel.getUserSingleTon().addHostedEvent(eventModel.getId());
+
+            // Update hosted event
+            firebaseAPIs.updateUserData(UserModel.getUserSingleTon(), new FirebaseCallback() {
+                @Override
+                public void onSuccess(boolean success) {
+                    Toast.makeText(EventFormActivity.this, "Updated Successfully", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onSuccess(Uri uri) {
+
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Toast.makeText(EventFormActivity.this, "Error update user", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            Bitmap bitmap = ((BitmapDrawable) shapeableImageView.getDrawable()).getBitmap();
+
+            firebaseAPIs.storeMediaToFirebase(eventModel.getId(), bitmap, new FirebaseCallback() {
+                @Override
+                public void onSuccess(boolean success) {
+                }
+
+                @Override
+                public void onSuccess(Uri uri) {
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                }
+            });
         });
     }
 }

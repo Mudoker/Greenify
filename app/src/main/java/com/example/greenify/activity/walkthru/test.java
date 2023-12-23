@@ -1,4 +1,4 @@
-package com.example.greenify.activity;
+package com.example.greenify.activity.walkthru;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,13 +15,17 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.utils.widget.ImageFilterView;
 
+import com.bumptech.glide.Glide;
 import com.example.greenify.R;
 import com.example.greenify.activity.main.MainActivity;
 import com.example.greenify.util.ApplicationUtils;
+import com.example.greenify.util.FirebaseAPIs;
+import com.example.greenify.util.FirebaseCallback;
 import com.example.greenify.util.NotificationHelper;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class test extends AppCompatActivity {
     // Select Image locally
@@ -29,7 +33,7 @@ public class test extends AppCompatActivity {
         if (uri != null) {
             ImageFilterView imageFilterView = findViewById(R.id.img_selected);
             imageFilterView.setImageURI(uri);
-            
+
         }
     });
 
@@ -102,6 +106,25 @@ public class test extends AppCompatActivity {
         buttonOpenCamera.setOnClickListener((v) -> {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             takePictureLauncher.launch(intent);
+        });
+
+        ImageFilterView imageFilterView = findViewById(R.id.img_selected);
+
+        FirebaseAPIs firebaseAPIs = new FirebaseAPIs();
+        firebaseAPIs.getMediaDownloadUrlFromFirebase(UUID.fromString("6c21c5b5-8a3c-4e0f-8329-394a8d63e0f8"), new FirebaseCallback() {
+            @Override
+            public void onSuccess(boolean success) {
+
+            }
+
+            @Override
+            public void onSuccess(Uri uri) {
+                Glide.with(test.this).load(uri).into(imageFilterView);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+            }
         });
     }
 }

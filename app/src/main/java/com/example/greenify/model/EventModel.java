@@ -1,20 +1,29 @@
 package com.example.greenify.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.UUID;
 
-public class EventModel {
+public class EventModel implements Serializable {
     private UUID id;
     private String title;
     private String description;
     private String location;
 
-    private final UUID ownerId;
+    private UUID ownerId;
     private ArrayList<UUID> participants;
 
     private String category;
 
     private Boolean status;
+
+    private final Date createdDate;
+
+    public EventModel() {
+        status = true;
+        createdDate = new Date();
+    }
 
     public EventModel(String title, String description, String location, UUID ownerId, String category) {
         this.id = UUID.randomUUID();
@@ -24,10 +33,27 @@ public class EventModel {
         this.ownerId = ownerId;
         this.category = category;
         status = true;
+        createdDate = new Date();
+    }
+
+    public EventModel(UUID id, String title, String description, String location, UUID ownerId, ArrayList<UUID> participants, String category, Boolean status, Date createdDate) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.location = location;
+        this.ownerId = ownerId;
+        this.participants = participants;
+        this.category = category;
+        this.status = status;
+        this.createdDate = createdDate;
     }
 
     public UUID getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = UUID.fromString(id);
     }
 
     public String getTitle() {
@@ -90,7 +116,23 @@ public class EventModel {
         this.status = status;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public Date getCreatedDate() {
+        return createdDate;
     }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = UUID.fromString(ownerId);
+    }
+
+//    @PropertyName("id")
+//    public String getIdString() {
+//        return id != null ? id.toString() : null;
+//    }
+//
+//    @PropertyName("id")
+//    public void setIdString(String idString) {
+//        if (idString != null) {
+//            this.id = UUID.fromString(idString);
+//        }
+//    }
 }

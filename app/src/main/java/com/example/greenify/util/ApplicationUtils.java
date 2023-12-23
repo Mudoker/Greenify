@@ -27,6 +27,8 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
@@ -233,12 +235,6 @@ public class ApplicationUtils {
         }
     }
 
-    // Check permission
-    public static boolean checkLocationPermission(Context context) {
-        return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-    }
-
     // Helper method to read InputStream into byte array
     private byte[] readBytes(InputStream inputStream) throws IOException {
         ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
@@ -253,9 +249,27 @@ public class ApplicationUtils {
         return byteBuffer.toByteArray();
     }
 
-    // Convert base64 to bitmap
-    public static Bitmap byteArrayToBitmap(byte[] byteArray) {
+    public static Bitmap byteListToBitmap(List<Byte> byteList) {
+        byte[] byteArray = new byte[byteList.size()];
+        for (int i = 0; i < byteList.size(); i++) {
+            byteArray[i] = byteList.get(i);
+        }
+
         // Convert the byte array to a Bitmap
         return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+    }
+
+    public static List<Byte> bitmapToByteList(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+
+        byte[] byteArray = baos.toByteArray();
+        List<Byte> byteList = new ArrayList<>();
+
+        for (byte b : byteArray) {
+            byteList.add(b);
+        }
+
+        return byteList;
     }
 }

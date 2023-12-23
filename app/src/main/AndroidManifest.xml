@@ -57,7 +57,7 @@
             android:exported="false"
             android:theme="@style/Theme.Greenify" />
         <activity
-            android:name=".activity.test"
+            android:name=".activity.walkthru.test"
             android:exported="false"
             android:theme="@style/Theme.Greenify" />
         <activity

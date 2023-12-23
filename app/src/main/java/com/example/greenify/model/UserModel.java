@@ -19,8 +19,8 @@ public class UserModel {
 
     private String deviceToken;
 
-    public UserModel(String username, String email, String deviceToken) {
-        this.id = UUID.randomUUID();
+    public UserModel(UUID id, String username, String email, String deviceToken) {
+        this.id = id;
         this.username = username;
         this.email = email;
         this.deviceToken = deviceToken;

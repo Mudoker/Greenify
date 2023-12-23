@@ -1,6 +1,7 @@
 package com.example.greenify.activity.map
 
 //import com.mapbox.navigation.dropin.NavigationView
+
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
@@ -9,6 +10,8 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.location.Address
+import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
@@ -23,10 +26,13 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.greenify.R
 import com.example.greenify.util.ApplicationUtils
 import com.example.greenify.util.Environment
+import com.example.greenify.util.FirebaseAPIs
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.firestore.GeoPoint
 import com.google.gson.JsonObject
 import com.mapbox.android.core.location.LocationEngine
 import com.mapbox.android.core.location.LocationEngineCallback
@@ -70,7 +76,6 @@ import com.mapbox.navigation.core.lifecycle.MapboxNavigationApp
 import com.mapbox.navigation.core.trip.session.LocationMatcherResult
 import com.mapbox.navigation.core.trip.session.LocationObserver
 import com.mapbox.navigation.core.trip.session.OffRouteObserver
-import com.mapbox.navigation.core.trip.session.RouteProgressObserver
 import com.mapbox.navigation.dropin.NavigationView
 import com.mapbox.navigation.ui.maps.location.NavigationLocationProvider
 import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineApi
@@ -78,9 +83,17 @@ import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineView
 import com.mapbox.navigation.ui.maps.route.line.model.MapboxRouteLineOptions
 import com.mapbox.navigation.ui.maps.route.line.model.RouteLineResources
 import com.mapbox.turf.TurfMeasurement
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.suspendCancellableCoroutine
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
+import kotlin.coroutines.cancellation.CancellationException
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+
 
 class MapBoxActivity : AppCompatActivity() {
     //Map
@@ -92,7 +105,9 @@ class MapBoxActivity : AppCompatActivity() {
     private val systemResponse = Environment.getSystemResponse()
 
     // Annotation Id
-    private var annotationId = "123"
+    private var annotationId = ""
+
+    private var firebaseAPIs = FirebaseAPIs()
 
     // User location
     private var userLocation: Point =
@@ -149,7 +164,7 @@ class MapBoxActivity : AppCompatActivity() {
         userLocation = point
 
         mapView.getMapboxMap().setCamera(
-            CameraOptions.Builder().center(point).zoom(17.0).build()
+            CameraOptions.Builder().center(userLocation).zoom(17.0).build()
         )
     }
 
@@ -170,7 +185,10 @@ class MapBoxActivity : AppCompatActivity() {
             return false
         }
 
-        override fun onMoveEnd(detector: MoveGestureDetector) {}
+        override fun onMoveEnd(detector: MoveGestureDetector) {
+            mapBoxNavigation.registerRoutesObserver(routesObserver)
+            mapBoxNavigation.registerLocationObserver(locationObserver)
+        }
     }
 
     private val locationObserver: LocationObserver = object : LocationObserver {
@@ -205,23 +223,13 @@ class MapBoxActivity : AppCompatActivity() {
         }
     }
 
-    private val routeProgressObserver =
-        RouteProgressObserver { routeProgress ->
-            routeProgress.currentState.let { currentState ->
-                val state = currentState
-            }
-        }
-
-    private val offRouteObserver = OffRouteObserver {
-        // do something when the off route state changes
-    }
+    private val offRouteObserver = OffRouteObserver {}
 
     //Navigation
     private lateinit var mapBoxNavigation: MapboxNavigation
     private lateinit var btnNavigate: CardView
 
     // Simulation
-    private lateinit var btnSimulateRoute: CardView
     private lateinit var simulationView: NavigationView
 
     // Update marker
@@ -246,6 +254,27 @@ class MapBoxActivity : AppCompatActivity() {
         ) {
             activityResultLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
+
+        firebaseAPIs.getAllEventsData({ eventList ->
+            try {
+                eventList.forEach { event ->
+                    val geoPoint = getLocationFromAddress(event.location)
+                    if (geoPoint != null) {
+                        addPointAnnotationToMap(
+                            Point.fromLngLat(
+                                geoPoint.longitude,
+                                geoPoint.latitude
+                            )
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("Error converting", e.toString())
+            }
+        }, { e ->
+            e.printStackTrace()
+        })
+
 
         // Minimise map mini view
         val btnMinimise: TextView = findViewById(R.id.map_btn_minimise)
@@ -314,7 +343,6 @@ class MapBoxActivity : AppCompatActivity() {
         mapBoxNavigation = MapboxNavigation(navigationOptions)
         mapBoxNavigation.registerRoutesObserver(routesObserver)
         mapBoxNavigation.registerLocationObserver(locationObserver)
-        mapBoxNavigation.registerRouteProgressObserver(routeProgressObserver)
         mapBoxNavigation.unregisterOffRouteObserver(offRouteObserver)
 
         mapBoxNavigation.startTripSession()
@@ -350,6 +378,27 @@ class MapBoxActivity : AppCompatActivity() {
         }
     }
 
+    private fun getLocationFromAddress(strAddress: String?): GeoPoint? {
+        val coder = Geocoder(this)
+        val address: List<Address>?
+        try {
+            address = coder.getFromLocationName(strAddress!!, 5)
+            if (address == null) {
+                return null
+            }
+            val location: Address = address[0]
+            location.latitude
+            location.longitude
+            Log.e("Location Raw", location.toString())
+            return GeoPoint(
+                (location.latitude), (location.longitude)
+            )
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
     // Get route
     private fun getRouteToPoint(destination: Point) {
         val routeOptionsBuilder: RouteOptions.Builder = RouteOptions.builder()
@@ -365,20 +414,16 @@ class MapBoxActivity : AppCompatActivity() {
         routeOptionsBuilder.applyDefaultNavigationOptions()
 
         // Assuming mapBoxNavigation is your Mapbox Navigation instance
-        mapBoxNavigation.requestRoutes(
-            routeOptionsBuilder.build(),
+        mapBoxNavigation.requestRoutes(routeOptionsBuilder.build(),
             object : NavigationRouterCallback {
                 override fun onFailure(reasons: List<RouterFailure>, routeOptions: RouteOptions) {
                     ApplicationUtils.showDialog(
-                        this@MapBoxActivity,
-                        "System Error",
-                        "Failed to Get routes"
+                        this@MapBoxActivity, "System Error", "Failed to Get routes"
                     )
                 }
 
                 override fun onRoutesReady(
-                    routes: List<NavigationRoute>,
-                    routerOrigin: RouterOrigin
+                    routes: List<NavigationRoute>, routerOrigin: RouterOrigin
                 ) {
                     mapBoxNavigation.setNavigationRoutes(routes)
 //                    val navigationRoute = routes.first()
@@ -413,16 +458,13 @@ class MapBoxActivity : AppCompatActivity() {
     // Convert from Point to address
     private fun getReverseGeoCoding(point: Point): String {
         var resultAddress = ""
-        val reverseGeocode = MapboxGeocoding.builder()
-            .accessToken(getString(R.string.mapbox_access_token))
-            .query(point)
-            .geocodingTypes(GeocodingCriteria.TYPE_POI)
-            .build()
+        val reverseGeocode =
+            MapboxGeocoding.builder().accessToken(getString(R.string.mapbox_access_token))
+                .query(point).geocodingTypes(GeocodingCriteria.TYPE_POI).build()
 
         reverseGeocode.enqueueCall(object : Callback<GeocodingResponse> {
             override fun onResponse(
-                call: Call<GeocodingResponse>,
-                response: Response<GeocodingResponse>
+                call: Call<GeocodingResponse>, response: Response<GeocodingResponse>
             ) {
 
                 if (response.isSuccessful) {
@@ -436,8 +478,7 @@ class MapBoxActivity : AppCompatActivity() {
                         }
                     } else {
                         Log.e(
-                            "Route Destination: ",
-                            "No address found. Response: ${response.body()}"
+                            "Route Destination: ", "No address found. Response: ${response.body()}"
                         )
                     }
                 } else {
@@ -451,8 +492,7 @@ class MapBoxActivity : AppCompatActivity() {
             }
 
             override fun onFailure(
-                call: Call<GeocodingResponse>,
-                throwable: Throwable
+                call: Call<GeocodingResponse>, throwable: Throwable
             ) {
                 throwable.printStackTrace()
             }
@@ -461,20 +501,84 @@ class MapBoxActivity : AppCompatActivity() {
         return resultAddress
     }
 
-    // Convert address to point
-    private fun getGeocoding(stringQuery: String): Point {
+    private fun getGeocodingAsync(stringQuery: String): Deferred<Point> = lifecycleScope.async {
         var resultPoint: Point = Point.fromLngLat(0.0, 0.0)
 
-        val geocode = MapboxGeocoding.builder()
-            .accessToken(getString(R.string.mapbox_access_token))
+        val geocode = MapboxGeocoding.builder().accessToken(getString(R.string.mapbox_access_token))
+            .query(stringQuery).geocodingTypes(
+                GeocodingCriteria.TYPE_POI,
+                GeocodingCriteria.TYPE_ADDRESS,
+                GeocodingCriteria.TYPE_PLACE
+            ).limit(1).build()
+
+        try {
+            val response = suspendCancellableCoroutine<GeocodingResponse> { continuation ->
+                geocode.enqueueCall(object : Callback<GeocodingResponse> {
+                    override fun onResponse(
+                        call: Call<GeocodingResponse>, response: Response<GeocodingResponse>
+                    ) {
+                        if (!continuation.isCancelled) {
+                            if (response.isSuccessful) {
+                                val results = response.body()?.features()
+
+                                if (!results.isNullOrEmpty()) {
+                                    val firstResultPoint = results[0].center()
+                                    if (firstResultPoint != null) {
+                                        resultPoint = Point.fromLngLat(
+                                            firstResultPoint.longitude(),
+                                            firstResultPoint.latitude()
+                                        )
+                                        Log.d(
+                                            "Route Destination Geo LNG: ",
+                                            firstResultPoint.longitude().toString()
+                                        )
+                                        Log.d(
+                                            "Route Destination Geo LAT: ",
+                                            firstResultPoint.latitude().toString()
+                                        )
+                                    }
+                                } else {
+                                    Log.e(
+                                        "Route Destination Geo: ",
+                                        "No coordinates found for $stringQuery. Response: ${response.body()}"
+                                    )
+                                }
+                            } else {
+                                Log.e(
+                                    "Route Destination: ",
+                                    "Request failed with code ${response.code()}. Response: ${
+                                        response.errorBody()?.string()
+                                    }"
+                                )
+                            }
+                            continuation.resume(response.body()!!)
+                        }
+                    }
+
+                    override fun onFailure(
+                        call: Call<GeocodingResponse>, throwable: Throwable
+                    ) {
+                        throwable.printStackTrace()
+                        continuation.resumeWithException(throwable)
+                    }
+                })
+            }
+        } catch (e: CancellationException) {
+            // Handle cancellation if needed
+        }
+
+        return@async resultPoint
+    }
+
+    // Convert address to point
+    private fun getGeocoding(stringQuery: String, callback: (Point) -> Unit) {
+        val geocode = MapboxGeocoding.builder().accessToken(getString(R.string.mapbox_access_token))
             .query(stringQuery)
-            .geocodingTypes(GeocodingCriteria.TYPE_POI)
-            .build()
+            .geocodingTypes(GeocodingCriteria.TYPE_ADDRESS, GeocodingCriteria.TYPE_POI).build()
 
         geocode.enqueueCall(object : Callback<GeocodingResponse> {
             override fun onResponse(
-                call: Call<GeocodingResponse>,
-                response: Response<GeocodingResponse>
+                call: Call<GeocodingResponse>, response: Response<GeocodingResponse>
             ) {
                 if (response.isSuccessful) {
                     val results = response.body()?.features()
@@ -482,12 +586,16 @@ class MapBoxActivity : AppCompatActivity() {
                     if (!results.isNullOrEmpty()) {
                         val firstResultPoint = results[0].center()
                         if (firstResultPoint != null) {
-                            resultPoint = firstResultPoint
-                            Log.e("Route Destination: ", firstResultPoint.toString())
+                            val resultPoint = Point.fromLngLat(
+                                firstResultPoint.longitude(), firstResultPoint.latitude()
+                            )
+                            Log.e("Route Destination Geo: ", resultPoint.toString())
+                            callback(resultPoint)
+                            return
                         }
                     } else {
                         Log.e(
-                            "Route Destination: ",
+                            "Route Destination Geo: ",
                             "No coordinates found for $stringQuery. Response: ${response.body()}"
                         )
                     }
@@ -499,17 +607,20 @@ class MapBoxActivity : AppCompatActivity() {
                         }"
                     )
                 }
+
+                // If something goes wrong, invoke the callback with the default coordinates (0.0, 0.0)
+                callback(Point.fromLngLat(0.0, 0.0))
             }
 
             override fun onFailure(
-                call: Call<GeocodingResponse>,
-                throwable: Throwable
+                call: Call<GeocodingResponse>, throwable: Throwable
             ) {
                 throwable.printStackTrace()
+
+                // Handle failure by invoking the callback with the default coordinates (0.0, 0.0)
+                callback(Point.fromLngLat(0.0, 0.0))
             }
         })
-
-        return resultPoint
     }
 
     private fun navigateCamera(point: Point, bearing: Double) {

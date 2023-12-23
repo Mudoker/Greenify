@@ -1,6 +1,7 @@
 package com.example.greenify.activity.auth;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
@@ -21,8 +22,10 @@ import com.example.greenify.util.SystemResponse;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -88,13 +91,25 @@ public class SignUpActivity extends AppCompatActivity {
 
             firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    UserModel user = new UserModel(username, email, Environment.getDeviceToken());
-                    SettingModel settingModel = new SettingModel(user.getId(), 0, true, "m", 17.0);
+                    FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
+                    UUID userid;
+                    if (currentFirebaseUser != null) {
+                        userid = UUID.fromString(currentFirebaseUser.getUid());
+                    } else {
+                        userid = UUID.randomUUID();
+                    }
+
+                    UserModel user = new UserModel(userid, username, email, Environment.getDeviceToken());
+                    SettingModel settingModel = new SettingModel(user.getId(), 0, true, "m", 17.0);
                     firebaseAPIs.storeUserData(user, new FirebaseCallback() {
                         @Override
                         public void onSuccess(boolean success) {
                             ApplicationUtils.showDialog(SignUpActivity.this, "System Alert", "Event Created Successfully");
+                        }
+
+                        @Override
+                        public void onSuccess(Uri uri) {
                         }
 
                         @Override
@@ -107,6 +122,10 @@ public class SignUpActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(boolean success) {
                             Log.d("Initialize Setting", "Success");
+                        }
+
+                        @Override
+                        public void onSuccess(Uri uri) {
                         }
 
                         @Override

@@ -110,4 +110,6 @@
     <string name="mapbox_access_token" translatable="false">pk.eyJ1IjoibXVkb2tlciIsImEiOiJjbHFkZnFtOXkwY2hyMnFwbHl2a2JwZnhxIn0.UkL02Bnu2IQoyIT5-1If1Q</string>
     <string name="location">LOCATION</string>
     <string name="nothing_to_show">Nothing to show</string>
+
+    <string name="undefined">Undefined</string>
 </resources>
