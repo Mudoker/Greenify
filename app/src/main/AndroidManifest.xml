@@ -30,8 +30,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
         <activity
+            android:name=".activity.event.EventUpdateFormActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Greenify" />
+        <activity
             android:name=".activity.event.EventMemberListActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.Greenify" />
 
         <meta-data
             android:name="mapbox_styleUrl"
@@ -39,7 +44,6 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/greenify_app_logo" />
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/dark_blue" />

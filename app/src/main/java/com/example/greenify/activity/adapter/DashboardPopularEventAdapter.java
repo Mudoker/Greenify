@@ -37,7 +37,11 @@ public class DashboardPopularEventAdapter extends RecyclerView.Adapter<Dashboard
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        if (eventList == null) {
+            return;
+        }
         EventModel eventModel = eventList.get(position);
+
         holder.itemView.findViewById(R.id.item_popular_event_image);
         holder.itemView.findViewById(R.id.item_popular_event_title);
         holder.itemView.findViewById(R.id.item_popular_event_host);
@@ -49,7 +53,7 @@ public class DashboardPopularEventAdapter extends RecyclerView.Adapter<Dashboard
 
         String[] hostName = {null};
 
-        firebaseAPIs.getUserDataById(eventModel.getOwnerId().toString(), userModel -> {
+        firebaseAPIs.getUserDataById(eventModel.getOwnerId(), userModel -> {
             hostName[0] = userModel.getUsername();
 
             if (TextUtils.isEmpty(hostName[0])) {
@@ -57,7 +61,6 @@ public class DashboardPopularEventAdapter extends RecyclerView.Adapter<Dashboard
             }
             holder.eventHost.setText(hostName[0]);
         }, e -> holder.eventHost.setText(R.string.undefined));
-
 
         firebaseAPIs.getMediaDownloadUrlFromFirebase(eventModel.getId(), new FirebaseCallback() {
             @Override
@@ -106,11 +109,11 @@ public class DashboardPopularEventAdapter extends RecyclerView.Adapter<Dashboard
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView eventImage;
-        TextView eventTitle;
-        TextView eventHost;
+        private final ImageView eventImage;
+        private final TextView eventTitle;
+        private final TextView eventHost;
 
-        TextView eventType;
+        private final TextView eventType;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

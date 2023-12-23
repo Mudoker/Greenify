@@ -14,8 +14,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import com.example.greenify.R;
+import com.example.greenify.activity.main.MainActivity;
+import com.example.greenify.model.UserModel;
 import com.example.greenify.util.ApplicationUtils;
 import com.example.greenify.util.Environment;
+import com.example.greenify.util.FirebaseAPIs;
 import com.example.greenify.util.SystemResponse;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -38,30 +41,31 @@ public class AuthenticationActivity extends AppCompatActivity {
 
     private final SystemResponse SYSTEM_RESPONSE = Environment.getSystemResponse();
 
-    private final ActivityResultLauncher<Intent> googleSignInLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                    result -> {
-                        if (result.getResultCode() == RESULT_OK) {
-                            Intent data = result.getData();
+    private final ActivityResultLauncher<Intent> googleSignInLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() == RESULT_OK) {
+            Intent data = result.getData();
 
-                            Task<GoogleSignInAccount> googleSignInAccountTask =
-                                    GoogleSignIn.getSignedInAccountFromIntent(data);
+            Task<GoogleSignInAccount> googleSignInAccountTask = GoogleSignIn.getSignedInAccountFromIntent(data);
 
-                            try {
-                                GoogleSignInAccount googleSignInAccount = googleSignInAccountTask.getResult(ApiException.class);
-                                AuthCredential authCredential = GoogleAuthProvider.getCredential(googleSignInAccount.getIdToken(), null);
+            try {
+                GoogleSignInAccount googleSignInAccount = googleSignInAccountTask.getResult(ApiException.class);
+                AuthCredential authCredential = GoogleAuthProvider.getCredential(googleSignInAccount.getIdToken(), null);
 
-                                firebaseAuth.signInWithCredential(authCredential).addOnCompleteListener(task -> {
-                                    if (task.isSuccessful()) {
-                                        ApplicationUtils.showDialog(AuthenticationActivity.this, "Authentication", SYSTEM_RESPONSE.getSuccess());
-                                    }
-                                });
-                            } catch (ApiException e) {
-                                throw new RuntimeException(e);
-                            }
+                firebaseAuth.signInWithCredential(authCredential).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        ApplicationUtils.showDialog(AuthenticationActivity.this, "Authentication", SYSTEM_RESPONSE.getSuccess());
 
-                        }
-                    });
+                        Intent intent = new Intent(this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
+            } catch (ApiException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +115,21 @@ public class AuthenticationActivity extends AppCompatActivity {
                 return;
             }
 
-            firebaseAuth.signInWithEmailAndPassword(email, pwd).addOnSuccessListener(authResult -> ApplicationUtils.showDialog(AuthenticationActivity.this, "Authentication", SYSTEM_RESPONSE.getSuccess()));
+            firebaseAuth.signInWithEmailAndPassword(email, pwd).addOnSuccessListener(authResult -> {
+                ApplicationUtils.showDialog(AuthenticationActivity.this, "Authentication", SYSTEM_RESPONSE.getSuccess());
+
+                Objects.requireNonNull(authResult.getUser()).getUid();
+
+                FirebaseAPIs firebaseAPIs = new FirebaseAPIs();
+                firebaseAPIs.getUserDataById(authResult.getUser().getUid(), userModel -> {
+                    UserModel.setUserSingleTon(userModel);
+                    Intent intent = new Intent(AuthenticationActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+
+
+                }, e -> ApplicationUtils.showDialog(AuthenticationActivity.this, "Authentication Failed", SYSTEM_RESPONSE.getBAD_REQUEST()));
+            });
         });
 
         btnForgotPwd.setOnClickListener((v) -> {
@@ -134,10 +152,7 @@ public class AuthenticationActivity extends AppCompatActivity {
             });
         });
 
-        GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.oauth_client_id))
-                .requestEmail()
-                .build();
+        GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(getString(R.string.oauth_client_id)).requestEmail().build();
 
         GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, signInOptions);
 

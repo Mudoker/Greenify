@@ -6,13 +6,13 @@ import java.util.Date;
 import java.util.UUID;
 
 public class EventModel implements Serializable {
-    private UUID id;
+    private String id;
     private String title;
     private String description;
     private String location;
 
-    private UUID ownerId;
-    private ArrayList<UUID> participants;
+    private String ownerId;
+    private ArrayList<String> participants = new ArrayList<>();
 
     private String category;
 
@@ -25,8 +25,8 @@ public class EventModel implements Serializable {
         createdDate = new Date();
     }
 
-    public EventModel(String title, String description, String location, UUID ownerId, String category) {
-        this.id = UUID.randomUUID();
+    public EventModel(String title, String description, String location, String ownerId, String category) {
+        this.id = UUID.randomUUID().toString();
         this.title = title;
         this.description = description;
         this.location = location;
@@ -36,24 +36,12 @@ public class EventModel implements Serializable {
         createdDate = new Date();
     }
 
-    public EventModel(UUID id, String title, String description, String location, UUID ownerId, ArrayList<UUID> participants, String category, Boolean status, Date createdDate) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.location = location;
-        this.ownerId = ownerId;
-        this.participants = participants;
-        this.category = category;
-        this.status = status;
-        this.createdDate = createdDate;
-    }
-
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
     public void setId(String id) {
-        this.id = UUID.fromString(id);
+        this.id = id;
     }
 
     public String getTitle() {
@@ -80,20 +68,34 @@ public class EventModel implements Serializable {
         this.location = location;
     }
 
-    public UUID getOwnerId() {
+    public String getOwnerId() {
         return ownerId;
     }
 
-    public ArrayList<UUID> getParticipants() {
+    public ArrayList<String> getParticipants() {
+        // Ensure participants list is initialized before returning
+        if (participants == null) {
+            participants = new ArrayList<>();
+        }
         return participants;
     }
 
-    public void setParticipants(ArrayList<UUID> participants) {
+    public void setParticipants(ArrayList<String> participants) {
         this.participants = participants;
     }
 
-    public void addParticipants(UUID participant) {
+    public void addParticipants(String participant) {
+        // Ensure participants list is initialized before adding
+        if (participants == null) {
+            participants = new ArrayList<>();
+        }
         this.participants.add(participant);
+    }
+
+    public void removeParticipants(String participant) {
+        if (participants != null) {
+            this.participants.remove(participant);
+        }
     }
 
     public String getCategory() {
@@ -121,18 +123,6 @@ public class EventModel implements Serializable {
     }
 
     public void setOwnerId(String ownerId) {
-        this.ownerId = UUID.fromString(ownerId);
+        this.ownerId = ownerId;
     }
-
-//    @PropertyName("id")
-//    public String getIdString() {
-//        return id != null ? id.toString() : null;
-//    }
-//
-//    @PropertyName("id")
-//    public void setIdString(String idString) {
-//        if (idString != null) {
-//            this.id = UUID.fromString(idString);
-//        }
-//    }
 }

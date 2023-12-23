@@ -2,10 +2,12 @@ package com.example.greenify.activity.walkthru;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -15,10 +17,13 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.greenify.R;
 import com.example.greenify.activity.adapter.WalkThruPagerAdapter;
+import com.example.greenify.activity.auth.AuthenticationActivity;
 import com.example.greenify.activity.main.MainActivity;
-import com.example.greenify.activity.map.MapBoxActivity;
+import com.example.greenify.model.UserModel;
 import com.example.greenify.util.ApplicationUtils;
 import com.example.greenify.util.Environment;
+import com.example.greenify.util.FirebaseAPIs;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 public class WalkThruActivity extends AppCompatActivity {
@@ -80,8 +85,40 @@ public class WalkThruActivity extends AppCompatActivity {
         });
 
         skipButton.setOnClickListener(v -> {
-            startActivity(new Intent(this, MapBoxActivity.class));
-            finish();
+            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+
+            if (firebaseAuth.getCurrentUser() != null) {
+                FirebaseAPIs firebaseAPIs = new FirebaseAPIs();
+                try {
+                    firebaseAPIs.getUserDataById(firebaseAuth.getCurrentUser().getUid(), userModel -> {
+                        UserModel.setUserSingleTon(userModel);
+
+                        startActivity(new Intent(this, MainActivity.class));
+                        finish();
+                    }, e -> {
+                        Log.e("Error Session User", String.valueOf(e));
+                        Log.e("Error Session User ID", firebaseAuth.getCurrentUser().getUid());
+
+                        Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show();
+
+                        startActivity(new Intent(this, AuthenticationActivity.class));
+                        finish();
+                    });
+                } catch (Exception e) {
+                    Log.e("Error Session User", String.valueOf(e));
+                    Log.e("Error Session User ID", firebaseAuth.getCurrentUser().getUid());
+
+                    Toast.makeText(this, "Please try again", Toast.LENGTH_SHORT).show();
+
+                    startActivity(new Intent(this, AuthenticationActivity.class));
+                    finish();
+                }
+
+
+            } else {
+                startActivity(new Intent(this, AuthenticationActivity.class));
+                finish();
+            }
         });
 
         mWalkThruSliderViewPager = findViewById(R.id.walk_thru_slide_pager);

@@ -36,7 +36,7 @@ public class FirebaseAPIs {
         Map<String, Object> userData = createUserDataMap(userModel);
 
         // Create a document reference in the "user" collection with the user's ID
-        db.collection("users").document(userModel.getId().toString()).set(userData).addOnSuccessListener(aVoid -> {
+        db.collection("users").document(userModel.getId()).set(userData).addOnSuccessListener(aVoid -> {
             callback.onSuccess(true);
             Log.d("Firestore User", "DocumentSnapshot successfully written!");
         }).addOnFailureListener(e -> {
@@ -51,12 +51,24 @@ public class FirebaseAPIs {
         // Create a Map from the User object
         Map<String, Object> userData = createUserDataMap(userModel);
 
+        ArrayList<String> commonEvents = new ArrayList<>(userModel.getJoinedEvents());
+        commonEvents.retainAll(userModel.getHostedEvents());
+
+        // Remove common events from hostedEvents
+        userModel.getHostedEvents().removeAll(commonEvents);
+        
         // Update the document in the "user" collection with the user's ID
-        db.collection("users").document(userModel.getId().toString()).update(userData).addOnSuccessListener(aVoid -> {
-            callback.onSuccess(true);
+        db.collection("users").document(userModel.getId()).update(userData).addOnSuccessListener(aVoid -> {
+
+            if (callback != null) {
+                callback.onSuccess(true);
+            }
+
             Log.d("Firestore User", "DocumentSnapshot successfully updated!");
         }).addOnFailureListener(e -> {
-            callback.onFailure(e);
+            if (callback != null) {
+                callback.onFailure(e);
+            }
             Log.w("Firestore User Error", "Error updating document", e);
         });
     }
@@ -68,17 +80,22 @@ public class FirebaseAPIs {
         userData.put("phone", userModel.getPhone());
         userData.put("email", userModel.getEmail());
         userData.put("joinedEvents", userModel.getJoinedEvents());
+        userData.put("hostedEvents", userModel.getHostedEvents());
         userData.put("points", userModel.getPoints());
         userData.put("deviceToken", userModel.getDeviceToken());
         return userData;
     }
+
 
     public void getUserDataById(String userId, OnSuccessListener<UserModel> onSuccessListener, OnFailureListener onFailureListener) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // Reference to the "users" collection
         CollectionReference usersRef = db.collection("users");
-
+        if (userId == null) {
+            // Handle the case where userModel.getId() is null, maybe log an error
+            return;
+        }
         // Reference to the specific user document based on the provided userId
         DocumentReference userDocRef = usersRef.document(userId);
 
@@ -87,7 +104,6 @@ public class FirebaseAPIs {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
                 if (document.exists()) {
-                    // Convert the document to a UserModel (assuming you have a UserModel class)
                     UserModel userModel = document.toObject(UserModel.class);
                     onSuccessListener.onSuccess(userModel);
                 } else {
@@ -99,6 +115,31 @@ public class FirebaseAPIs {
         });
     }
 
+    public void getEventDataById(String eventId, OnSuccessListener<EventModel> onSuccessListener, OnFailureListener onFailureListener) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Reference to the "users" collection
+        CollectionReference usersRef = db.collection("events");
+
+        // Reference to the specific user document based on the provided userId
+        DocumentReference userDocRef = usersRef.document(eventId);
+
+        // Retrieve the user document
+        userDocRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    // Convert the document to a UserModel (assuming you have a UserModel class)
+                    EventModel eventModel = document.toObject(EventModel.class);
+                    onSuccessListener.onSuccess(eventModel);
+                } else {
+                    onFailureListener.onFailure(new Exception("User document not found"));
+                }
+            } else {
+                onFailureListener.onFailure(new Exception("User not found with id: " + eventId));
+            }
+        });
+    }
 
     public void getUserDataByEmail(String userEmail, OnSuccessListener<DocumentSnapshot> onSuccessListener, OnFailureListener onFailureListener) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -128,18 +169,29 @@ public class FirebaseAPIs {
 
     // Helper method to convert DocumentSnapshot to UserModel
     private UserModel documentSnapshotToUserModel(DocumentSnapshot documentSnapshot) {
-        UUID id = UUID.fromString(documentSnapshot.getId());
+        String id = documentSnapshot.getId();
         String username = documentSnapshot.getString("username");
         String phone = documentSnapshot.getString("phone");
         String email = documentSnapshot.getString("email");
-        ArrayList<?> rawList = (ArrayList<?>) documentSnapshot.get("joinedEvents");
-        ArrayList<UUID> joinedEvents = new ArrayList<>();
+        ArrayList<?> rawList1 = (ArrayList<?>) documentSnapshot.get("joinedEvents");
+        ArrayList<String> joinedEvents = new ArrayList<>();
 
-        // Iterate and cast each element to UUID
-        if (rawList != null) {
-            for (Object item : rawList) {
+        ArrayList<?> rawList2 = (ArrayList<?>) documentSnapshot.get("hostedEvents");
+        ArrayList<String> hostedEvents = new ArrayList<>();
+
+        // Iterate and cast each element to String
+        if (rawList1 != null) {
+            for (Object item : rawList1) {
                 if (item instanceof String) {
-                    joinedEvents.add(UUID.fromString((String) item));
+                    joinedEvents.add((String) item);
+                }
+            }
+        }
+
+        if (rawList2 != null) {
+            for (Object item : rawList2) {
+                if (item instanceof String) {
+                    hostedEvents.add((String) item);
                 }
             }
         }
@@ -147,7 +199,7 @@ public class FirebaseAPIs {
         Double points = documentSnapshot.getDouble("points");
         String deviceToken = documentSnapshot.getString("deviceToken");
 
-        return new UserModel(id, username, phone, email, joinedEvents, points, deviceToken);
+        return new UserModel(id, username, phone, email, joinedEvents, hostedEvents, points, deviceToken);
     }
 
 
@@ -206,7 +258,7 @@ public class FirebaseAPIs {
                 // Convert DocumentSnapshot to SettingModel
                 SettingModel settingModel = documentSnapshot.toObject(SettingModel.class);
                 if (settingModel != null) {
-                    settingModel.setId(UUID.fromString(documentSnapshot.getId()));
+                    settingModel.setId(documentSnapshot.getId());
                     onSuccessListener.onSuccess(settingModel);
                 }
             } else {
@@ -346,6 +398,7 @@ public class FirebaseAPIs {
                             if (eventModel != null) {
                                 eventModel.setId(documentSnapshot.getId());
                                 eventModels.add(eventModel);
+                                Log.d("Retrieved Event Id", eventModel.getId().toString());
                             }
                         }
 
@@ -365,11 +418,11 @@ public class FirebaseAPIs {
     }
 
 
-    public void storeMediaToFirebase(UUID uuid, Bitmap bitmap, FirebaseCallback callback) {
+    public void storeMediaToFirebase(String uuid, Bitmap bitmap, FirebaseCallback callback) {
         // Get reference
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
-        StorageReference imageRef = storageRef.child("images/" + uuid.toString());
+        StorageReference imageRef = storageRef.child("images/" + uuid);
 
         //Convert to ByteArrayOutputStream
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -383,11 +436,11 @@ public class FirebaseAPIs {
         }).addOnFailureListener(callback::onFailure);
     }
 
-    public void getMediaDownloadUrlFromFirebase(UUID uuid, FirebaseCallback callback) {
+    public void getMediaDownloadUrlFromFirebase(String uuid, FirebaseCallback callback) {
         // reference
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
-        StorageReference imageRef = storageRef.child("images/" + uuid.toString());
+        StorageReference imageRef = storageRef.child("images/" + uuid);
 
         //Get download URL
         imageRef.getDownloadUrl().addOnSuccessListener(callback::onSuccess).addOnFailureListener(callback::onFailure);

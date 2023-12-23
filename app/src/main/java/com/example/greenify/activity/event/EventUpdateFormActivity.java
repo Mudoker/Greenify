@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -31,7 +30,7 @@ import com.google.android.material.imageview.ShapeableImageView;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class EventFormActivity extends AppCompatActivity {
+public class EventUpdateFormActivity extends AppCompatActivity {
     //Apis
     private final FirebaseAPIs firebaseAPIs = new FirebaseAPIs();
 
@@ -77,22 +76,12 @@ public class EventFormActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event_form);
         ApplicationUtils.configureWindowInsets(this);
 
-        Intent intent = getIntent();
-        if (intent != null) {
-            if (intent.hasExtra("EVENT_MODEL")) {
-                eventModel = (EventModel) intent.getSerializableExtra("EVENT_MODEL");
-                assert eventModel != null;
-                if (Objects.equals(eventModel.getOwnerId(), UserModel.getUserSingleTon().getId())) {
-                    isEdit = true;
-                }
-            }
-        }
 
         ShapeableImageView shapeableImageView = findViewById(R.id.img_event);
 
         shapeableImageView.setOnClickListener(v -> {
             // Create an AlertDialog
-            AlertDialog.Builder builder = new AlertDialog.Builder(EventFormActivity.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(EventUpdateFormActivity.this);
             builder.setTitle("Choose an option");
 
             // Add options to the dialog
@@ -102,8 +91,8 @@ public class EventFormActivity extends AppCompatActivity {
                         pickImageLauncher.launch("image/*");
                         break;
                     case 1:
-                        Intent intentPicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        takePictureLauncher.launch(intentPicture);
+                        Intent intentTakePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        takePictureLauncher.launch(intentTakePicture);
                         break;
                 }
             });
@@ -220,13 +209,12 @@ public class EventFormActivity extends AppCompatActivity {
                 eventModel.setLocation(location);
             } else {
                 eventModel = new EventModel(title, description, location, UserModel.getUserSingleTon().getId(), selectedEventCategory.toString());
-                UserModel.getUserSingleTon().addHostedEvent(eventModel.getId());
             }
 
-            firebaseAPIs.storeEventData(eventModel, new FirebaseCallback() {
+            firebaseAPIs.updateEventData(eventModel, new FirebaseCallback() {
                 @Override
                 public void onSuccess(boolean success) {
-                    ApplicationUtils.showDialog(EventFormActivity.this, "System Alert", "Event Created Successfully");
+                    ApplicationUtils.showDialog(EventUpdateFormActivity.this, "System Alert", "Event Created Successfully");
                 }
 
                 @Override
@@ -235,29 +223,9 @@ public class EventFormActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Exception e) {
-                    ApplicationUtils.showDialog(EventFormActivity.this, "System Alert", Environment.getSystemResponse().getBAD_REQUEST());
+                    ApplicationUtils.showDialog(EventUpdateFormActivity.this, "System Alert", Environment.getSystemResponse().getBAD_REQUEST());
                 }
             });
-
-            if (!isEdit) {
-                // Update hosted event
-                firebaseAPIs.updateUserData(UserModel.getUserSingleTon(), new FirebaseCallback() {
-                    @Override
-                    public void onSuccess(boolean success) {
-                        Toast.makeText(EventFormActivity.this, "Updated Successfully", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onSuccess(Uri uri) {
-
-                    }
-
-                    @Override
-                    public void onFailure(Exception e) {
-                        Toast.makeText(EventFormActivity.this, "Error update user", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
 
             Bitmap bitmap = ((BitmapDrawable) shapeableImageView.getDrawable()).getBitmap();
 

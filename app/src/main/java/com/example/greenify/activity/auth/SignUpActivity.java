@@ -8,10 +8,12 @@ import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.greenify.R;
+import com.example.greenify.activity.main.MainActivity;
 import com.example.greenify.model.SettingModel;
 import com.example.greenify.model.UserModel;
 import com.example.greenify.util.ApplicationUtils;
@@ -93,19 +95,30 @@ public class SignUpActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
-                    UUID userid;
+                    String userid;
                     if (currentFirebaseUser != null) {
-                        userid = UUID.fromString(currentFirebaseUser.getUid());
+                        userid = currentFirebaseUser.getUid();
                     } else {
-                        userid = UUID.randomUUID();
+                        userid = UUID.randomUUID().toString();
                     }
 
                     UserModel user = new UserModel(userid, username, email, Environment.getDeviceToken());
+                    UserModel.setUserSingleTon(user);
                     SettingModel settingModel = new SettingModel(user.getId(), 0, true, "m", 17.0);
+
                     firebaseAPIs.storeUserData(user, new FirebaseCallback() {
                         @Override
                         public void onSuccess(boolean success) {
-                            ApplicationUtils.showDialog(SignUpActivity.this, "System Alert", "Event Created Successfully");
+                            ApplicationUtils.showDialog(SignUpActivity.this, "System Alert", "User Created Successfully");
+                            Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+
+                            FirebaseAPIs firebaseAPIs = new FirebaseAPIs();
+                            firebaseAPIs.getUserDataById(UserModel.getUserSingleTon().getId(), userModel -> {
+                                startActivity(intent);
+                                finish();
+                            }, e -> {
+                                Toast.makeText(SignUpActivity.this, "Failed getting data user", Toast.LENGTH_SHORT).show();
+                            });
                         }
 
                         @Override
@@ -114,6 +127,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                         @Override
                         public void onFailure(Exception e) {
+                            Log.e("Initialize User", String.valueOf(e));
                             ApplicationUtils.showDialog(SignUpActivity.this, "System Alert", Environment.getSystemResponse().getBAD_REQUEST());
                         }
                     });
@@ -121,7 +135,6 @@ public class SignUpActivity extends AppCompatActivity {
                     firebaseAPIs.storeSettingModelData(settingModel, new FirebaseCallback() {
                         @Override
                         public void onSuccess(boolean success) {
-                            Log.d("Initialize Setting", "Success");
                         }
 
                         @Override

@@ -1,9 +1,7 @@
 package com.example.greenify.model;
 
-import java.util.UUID;
-
 public class SettingModel {
-    private UUID id;
+    private String id;
 
     private int notificationSound;
 
@@ -15,7 +13,7 @@ public class SettingModel {
 
     private static SettingModel Setting_Single_Ton;
 
-    public SettingModel(UUID ownerId, int notificationSound, boolean pushNotification, String distanceUnit, Double mapZoom) {
+    public SettingModel(String ownerId, int notificationSound, boolean pushNotification, String distanceUnit, Double mapZoom) {
         this.id = ownerId;
         this.notificationSound = notificationSound;
         this.pushNotification = pushNotification;
@@ -55,7 +53,7 @@ public class SettingModel {
         this.mapZoom = mapZoom;
     }
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
@@ -67,7 +65,7 @@ public class SettingModel {
         Setting_Single_Ton = settingModel;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 }

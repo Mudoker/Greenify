@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mem_list_card"
+    android:layout_width="match_parent"
+    app:cardCornerRadius="20dp"
+    android:backgroundTint="@color/gray_50"
+    android:layout_margin="10dp"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/profile_img_mem_list"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_margin="10dp"
+            app:shapeAppearanceOverlay="@style/circularImageViewShape"
+            android:src="@drawable/test"
+            android:scaleType="centerCrop" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:layout_margin="10dp">
+
+            <TextView
+                android:id="@+id/mem_list_txt_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/event_title"
+                android:textColor="@color/white"
+                android:textSize="26sp"
+                android:fontFamily="@font/nunito_sans"
+                android:textStyle="bold"
+                android:alpha="0.8" />
+
+            <TextView
+                android:id="@+id/mem_list_txt_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/hello_worlddddd"
+                android:textColor="@color/white"
+                android:fontFamily="@font/nunito_sans"
+                android:textSize="16sp"
+                android:alpha="0.8" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

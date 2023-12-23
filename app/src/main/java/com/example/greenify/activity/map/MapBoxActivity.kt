@@ -4,7 +4,9 @@ package com.example.greenify.activity.map
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -14,8 +16,12 @@ import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -23,11 +29,21 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.greenify.R
+import com.example.greenify.activity.adapter.MapSearchAdapter
+import com.example.greenify.activity.event.EventDetailActivity
+import com.example.greenify.activity.main.MainActivity
+import com.example.greenify.model.EventModel
 import com.example.greenify.util.ApplicationUtils
 import com.example.greenify.util.Environment
 import com.example.greenify.util.FirebaseAPIs
@@ -42,9 +58,6 @@ import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.api.directions.v5.DirectionsCriteria
 import com.mapbox.api.directions.v5.models.Bearing
 import com.mapbox.api.directions.v5.models.RouteOptions
-import com.mapbox.api.geocoding.v5.GeocodingCriteria
-import com.mapbox.api.geocoding.v5.MapboxGeocoding
-import com.mapbox.api.geocoding.v5.models.GeocodingResponse
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.EdgeInsets
@@ -83,29 +96,32 @@ import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineView
 import com.mapbox.navigation.ui.maps.route.line.model.MapboxRouteLineOptions
 import com.mapbox.navigation.ui.maps.route.line.model.RouteLineResources
 import com.mapbox.turf.TurfMeasurement
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.suspendCancellableCoroutine
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import java.io.IOException
-import kotlin.coroutines.cancellation.CancellationException
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 
-class MapBoxActivity : AppCompatActivity() {
+class MapBoxActivity : AppCompatActivity(), MapSearchAdapter.OnItemClickListener {
     //Map
     private lateinit var mapView: MapView
     private lateinit var mapBoxMap: MapboxMap
     private lateinit var mapMiniView: LinearLayoutCompat
+    private var allEvents: List<EventModel> = emptyList()
+
+    //Search
+    private lateinit var mapSearchView: RecyclerView
+    private lateinit var mapSearchAdapter: MapSearchAdapter
+    private var selectedFilter: String = ""
+    private var selectedPhrase: String = ""
+
+    //Miniview
+    private lateinit var mapMiniTitle: TextView;
+    private lateinit var mapMiniAddress: TextView;
+    private lateinit var mapMiniDistance: TextView;
+    private lateinit var selectedEventDetail: EventModel;
 
     // Response Code
     private val systemResponse = Environment.getSystemResponse()
-
-    // Annotation Id
-    private var annotationId = ""
 
     private var firebaseAPIs = FirebaseAPIs()
 
@@ -255,31 +271,51 @@ class MapBoxActivity : AppCompatActivity() {
             activityResultLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
 
-        firebaseAPIs.getAllEventsData({ eventList ->
-            try {
-                eventList.forEach { event ->
-                    val geoPoint = getLocationFromAddress(event.location)
-                    if (geoPoint != null) {
-                        addPointAnnotationToMap(
-                            Point.fromLngLat(
-                                geoPoint.longitude,
-                                geoPoint.latitude
-                            )
-                        )
-                    }
-                }
-            } catch (e: Exception) {
-                Log.e("Error converting", e.toString())
-            }
-        }, { e ->
-            e.printStackTrace()
-        })
-
+        mapMiniView = findViewById(R.id.map_mini_layout)
 
         // Minimise map mini view
         val btnMinimise: TextView = findViewById(R.id.map_btn_minimise)
+        val btnEventDetail: CardView = findViewById(R.id.map_mini_detail_view)
+        // Request route
+        btnNavigate = findViewById(R.id.map_direction)
 
-        mapMiniView = findViewById(R.id.map_mini_layout)
+        btnNavigate.setOnClickListener {
+            val geoPoint = getLocationFromAddress(selectedEventDetail.location)
+            if (geoPoint != null) {
+                getRouteToPoint(Point.fromLngLat(geoPoint.longitude, geoPoint.latitude))
+            }
+        }
+
+        mapMiniTitle = findViewById(R.id.mapbox_mini_event_title)
+        mapMiniAddress = findViewById(R.id.mapbox_mini_event_address)
+        mapMiniDistance = findViewById(R.id.mapbox_mini_event_distance)
+        mapSearchView = findViewById(R.id.map_search_content)
+
+        btnEventDetail.setOnClickListener {
+            val intent = Intent(
+                this@MapBoxActivity, EventDetailActivity::class.java
+            )
+            intent.putExtra("EVENT_MODEL", selectedEventDetail)
+
+            // Use a coroutine to perform the background task
+            lifecycleScope.launch {
+                try {
+                    // Use suspend function to get user data
+                    firebaseAPIs.getUserDataById(selectedEventDetail.ownerId.toString(), {
+                        // Update the intent with user data
+                        intent.putExtra("HOST_NAME", it.email)
+                    }, {
+
+                    })
+
+                    // Start the activity after the background task is complete
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    // Handle exceptions
+                    Log.e("Firebase Error", "Error getting user data by ID: ${e.message}")
+                }
+            }
+        }
 
         btnMinimise.setOnClickListener {
             mapMiniView.visibility = View.GONE
@@ -293,16 +329,135 @@ class MapBoxActivity : AppCompatActivity() {
         }
 
         mapView = findViewById(R.id.mapView)
-
         mapBoxMap = mapView.getMapboxMap()
 
-        // CRUD Markers
-        val annotationApi = mapView.annotations
-        pointAnnotationManager = annotationApi.createPointAnnotationManager()
+
+        // Open search
+        val btnSearch: FloatingActionButton = findViewById(R.id.map_btn_open_search)
+        val btnMinimiseSearch: TextView = findViewById(R.id.map_btn_minimise_search)
+        val searchBar: LinearLayout = findViewById(R.id.map_search_bar)
+        val btnAll: AppCompatButton = findViewById(R.id.map_filter_all)
+        val btnParks: AppCompatButton = findViewById(R.id.map_filter_park)
+        val btnBeaches: AppCompatButton = findViewById(R.id.map_filter_beach)
+        val btnStreets: AppCompatButton = findViewById(R.id.map_filter_street)
+        val searchField: EditText = findViewById(R.id.map_search_edt)
+
+        val handler = Handler(Looper.getMainLooper())
+        val searchJob: Job? = null
+
+        searchField.doOnTextChanged { _, _, _, _ ->
+            // Cancel any existing job to ensure only the latest text change is processed
+            searchJob?.cancel()
+
+            // Post a delayed message to the handler
+            handler.postDelayed({
+                selectedPhrase = searchField.text.toString()
+                mapSearchAdapter.setSelectedFilter(selectedPhrase, selectedFilter)
+            }, 1000) // (1 second) delay
+        }
+
+        // Create a common click listener for all buttons
+        val commonClickListener = View.OnClickListener { v: View ->
+            // Reset the background tint of all buttons to gray
+            btnAll.backgroundTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    this@MapBoxActivity,
+                    R.color.gray
+                )
+            )
+            btnParks.backgroundTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    this@MapBoxActivity,
+                    R.color.gray
+                )
+            )
+            btnBeaches.backgroundTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    this@MapBoxActivity,
+                    R.color.gray
+                )
+            )
+            btnStreets.backgroundTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    this@MapBoxActivity,
+                    R.color.gray
+                )
+            )
+
+            // Set the background tint of the clicked button to white
+            (v as Button).backgroundTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    this@MapBoxActivity,
+                    android.R.color.white
+                )
+            )
+
+            // Update the selected category based on the clicked button
+            selectedFilter = if (v.getId() == R.id.map_filter_all) {
+                "All"
+            } else if (v.getId() == R.id.map_filter_park) {
+                "Park"
+            } else if (v.getId() == R.id.map_filter_beach) {
+                "Beach"
+            } else if (v.getId() == R.id.map_filter_street) {
+                "Street"
+            } else {
+                "All" // Default to "All" if an unknown button is clicked
+            }
+            mapSearchAdapter.setSelectedFilter(selectedPhrase, selectedFilter)
+        }
+
+        // Set the click listener for all buttons
+        btnAll.setOnClickListener(commonClickListener)
+        btnParks.setOnClickListener(commonClickListener)
+        btnBeaches.setOnClickListener(commonClickListener)
+        btnStreets.setOnClickListener(commonClickListener)
+
 
         mapBoxMap.loadStyleUri(Style.MAPBOX_STREETS) {
             if (it.isStyleLoaded) {
                 navigateCamera(userLocation, 0.0)
+                lifecycleScope.launch {
+                    firebaseAPIs.getAllEventsData({ eventList ->
+                        try {
+                            allEvents = eventList
+                            mapSearchAdapter = MapSearchAdapter(eventList)
+                            mapSearchAdapter.setOnItemClickListener(this@MapBoxActivity)
+
+                            val linearLayoutManager = LinearLayoutManager(this@MapBoxActivity)
+
+                            val itemDecoration =
+                                DividerItemDecoration(
+                                    this@MapBoxActivity,
+                                    DividerItemDecoration.VERTICAL
+                                )
+
+                            mapSearchView.layoutManager = linearLayoutManager
+                            mapSearchView.adapter = mapSearchAdapter
+                            mapSearchView.addItemDecoration(itemDecoration)
+
+                            eventList.forEach { event ->
+                                val geoPoint = getLocationFromAddress(event.location)
+                                if (geoPoint != null) {
+                                    addPointAnnotationToMap(
+                                        Point.fromLngLat(
+                                            geoPoint.longitude, geoPoint.latitude
+                                        ), event.id.toString()
+                                    )
+                                }
+                            }
+
+                            btnAll.performClick()
+                        } catch (e: Exception) {
+                            Log.e("Error converting", e.toString())
+                            allEvents = emptyList()
+                        }
+                    }, { e ->
+                        e.printStackTrace()
+                        allEvents = emptyList()
+                    })
+                }
+
             } else {
                 Toast.makeText(this, systemResponse.mapLoadFail(), Toast.LENGTH_SHORT).show()
             }
@@ -355,26 +510,24 @@ class MapBoxActivity : AppCompatActivity() {
             }
         }
 
-        // Request route
-        btnNavigate = findViewById(R.id.map_direction)
-
-        btnNavigate.setOnClickListener {
-            getRouteToPoint(Point.fromLngLat(106.69805298180039, 10.772695965238423))
-        }
-
-        // Open search
-        val btnSearch: FloatingActionButton = findViewById(R.id.map_btn_open_search)
-        val btnMinimiseSearch: TextView = findViewById(R.id.map_btn_minimise_search)
-        val searchBar: LinearLayout = findViewById(R.id.map_search_bar)
-
         btnSearch.setOnClickListener {
             searchBar.visibility = View.VISIBLE
             btnSearch.visibility = View.GONE
+            mapSearchView.visibility = View.VISIBLE
         }
 
         btnMinimiseSearch.setOnClickListener {
             searchBar.visibility = View.GONE
+            mapSearchView.visibility = View.GONE
             btnSearch.visibility = View.VISIBLE
+        }
+
+        // Close view
+        val btnCloseView: TextView = findViewById(R.id.btn_close_view)
+        btnCloseView.setOnClickListener {
+            intent = Intent(this@MapBoxActivity, MainActivity::class.java)
+            startActivity(intent)
+            finish()
         }
     }
 
@@ -414,7 +567,8 @@ class MapBoxActivity : AppCompatActivity() {
         routeOptionsBuilder.applyDefaultNavigationOptions()
 
         // Assuming mapBoxNavigation is your Mapbox Navigation instance
-        mapBoxNavigation.requestRoutes(routeOptionsBuilder.build(),
+        mapBoxNavigation.requestRoutes(
+            routeOptionsBuilder.build(),
             object : NavigationRouterCallback {
                 override fun onFailure(reasons: List<RouterFailure>, routeOptions: RouteOptions) {
                     ApplicationUtils.showDialog(
@@ -451,176 +605,9 @@ class MapBoxActivity : AppCompatActivity() {
     }
 
     // Calculate distance between two points
-    private fun calculateDistance(origin: Point, destination: Point): Double {
-        return TurfMeasurement.distance(userLocation, destination)
-    }
-
-    // Convert from Point to address
-    private fun getReverseGeoCoding(point: Point): String {
-        var resultAddress = ""
-        val reverseGeocode =
-            MapboxGeocoding.builder().accessToken(getString(R.string.mapbox_access_token))
-                .query(point).geocodingTypes(GeocodingCriteria.TYPE_POI).build()
-
-        reverseGeocode.enqueueCall(object : Callback<GeocodingResponse> {
-            override fun onResponse(
-                call: Call<GeocodingResponse>, response: Response<GeocodingResponse>
-            ) {
-
-                if (response.isSuccessful) {
-                    val results = response.body()?.features()
-
-                    if (!results.isNullOrEmpty()) {
-                        val firstResultPlaceName = results[0].placeName()
-                        if (firstResultPlaceName != null) {
-                            resultAddress = firstResultPlaceName
-                            Log.e("Route Destination: ", firstResultPlaceName)
-                        }
-                    } else {
-                        Log.e(
-                            "Route Destination: ", "No address found. Response: ${response.body()}"
-                        )
-                    }
-                } else {
-                    Log.e(
-                        "Route Destination: ",
-                        "Request failed with code ${response.code()}. Response: ${
-                            response.errorBody()?.string()
-                        }"
-                    )
-                }
-            }
-
-            override fun onFailure(
-                call: Call<GeocodingResponse>, throwable: Throwable
-            ) {
-                throwable.printStackTrace()
-            }
-        })
-
-        return resultAddress
-    }
-
-    private fun getGeocodingAsync(stringQuery: String): Deferred<Point> = lifecycleScope.async {
-        var resultPoint: Point = Point.fromLngLat(0.0, 0.0)
-
-        val geocode = MapboxGeocoding.builder().accessToken(getString(R.string.mapbox_access_token))
-            .query(stringQuery).geocodingTypes(
-                GeocodingCriteria.TYPE_POI,
-                GeocodingCriteria.TYPE_ADDRESS,
-                GeocodingCriteria.TYPE_PLACE
-            ).limit(1).build()
-
-        try {
-            val response = suspendCancellableCoroutine<GeocodingResponse> { continuation ->
-                geocode.enqueueCall(object : Callback<GeocodingResponse> {
-                    override fun onResponse(
-                        call: Call<GeocodingResponse>, response: Response<GeocodingResponse>
-                    ) {
-                        if (!continuation.isCancelled) {
-                            if (response.isSuccessful) {
-                                val results = response.body()?.features()
-
-                                if (!results.isNullOrEmpty()) {
-                                    val firstResultPoint = results[0].center()
-                                    if (firstResultPoint != null) {
-                                        resultPoint = Point.fromLngLat(
-                                            firstResultPoint.longitude(),
-                                            firstResultPoint.latitude()
-                                        )
-                                        Log.d(
-                                            "Route Destination Geo LNG: ",
-                                            firstResultPoint.longitude().toString()
-                                        )
-                                        Log.d(
-                                            "Route Destination Geo LAT: ",
-                                            firstResultPoint.latitude().toString()
-                                        )
-                                    }
-                                } else {
-                                    Log.e(
-                                        "Route Destination Geo: ",
-                                        "No coordinates found for $stringQuery. Response: ${response.body()}"
-                                    )
-                                }
-                            } else {
-                                Log.e(
-                                    "Route Destination: ",
-                                    "Request failed with code ${response.code()}. Response: ${
-                                        response.errorBody()?.string()
-                                    }"
-                                )
-                            }
-                            continuation.resume(response.body()!!)
-                        }
-                    }
-
-                    override fun onFailure(
-                        call: Call<GeocodingResponse>, throwable: Throwable
-                    ) {
-                        throwable.printStackTrace()
-                        continuation.resumeWithException(throwable)
-                    }
-                })
-            }
-        } catch (e: CancellationException) {
-            // Handle cancellation if needed
-        }
-
-        return@async resultPoint
-    }
-
-    // Convert address to point
-    private fun getGeocoding(stringQuery: String, callback: (Point) -> Unit) {
-        val geocode = MapboxGeocoding.builder().accessToken(getString(R.string.mapbox_access_token))
-            .query(stringQuery)
-            .geocodingTypes(GeocodingCriteria.TYPE_ADDRESS, GeocodingCriteria.TYPE_POI).build()
-
-        geocode.enqueueCall(object : Callback<GeocodingResponse> {
-            override fun onResponse(
-                call: Call<GeocodingResponse>, response: Response<GeocodingResponse>
-            ) {
-                if (response.isSuccessful) {
-                    val results = response.body()?.features()
-
-                    if (!results.isNullOrEmpty()) {
-                        val firstResultPoint = results[0].center()
-                        if (firstResultPoint != null) {
-                            val resultPoint = Point.fromLngLat(
-                                firstResultPoint.longitude(), firstResultPoint.latitude()
-                            )
-                            Log.e("Route Destination Geo: ", resultPoint.toString())
-                            callback(resultPoint)
-                            return
-                        }
-                    } else {
-                        Log.e(
-                            "Route Destination Geo: ",
-                            "No coordinates found for $stringQuery. Response: ${response.body()}"
-                        )
-                    }
-                } else {
-                    Log.e(
-                        "Route Destination: ",
-                        "Request failed with code ${response.code()}. Response: ${
-                            response.errorBody()?.string()
-                        }"
-                    )
-                }
-
-                // If something goes wrong, invoke the callback with the default coordinates (0.0, 0.0)
-                callback(Point.fromLngLat(0.0, 0.0))
-            }
-
-            override fun onFailure(
-                call: Call<GeocodingResponse>, throwable: Throwable
-            ) {
-                throwable.printStackTrace()
-
-                // Handle failure by invoking the callback with the default coordinates (0.0, 0.0)
-                callback(Point.fromLngLat(0.0, 0.0))
-            }
-        })
+    private fun calculateDistance(destination: Point): Double {
+        val distance = TurfMeasurement.distance(userLocation, destination)
+        return String.format("%.2f", distance).toDouble()
     }
 
     private fun navigateCamera(point: Point, bearing: Double) {
@@ -636,18 +623,24 @@ class MapBoxActivity : AppCompatActivity() {
     }
 
     // Adds a marker to the map with coordinates
-    private fun addPointAnnotationToMap(point: Point) {
+    private fun addPointAnnotationToMap(point: Point, id: String) {
+        Log.e("On create annotation", id)
+
         // Create a bitmap from drawable resource
         val locationIconBitmap = createBitmapFromDrawableRes(
             this@MapBoxActivity, R.drawable.baseline_location_on_48
         )
 
+        // CRUD Markers
+        val annotationApi = mapView.annotations
+        pointAnnotationManager = annotationApi.createPointAnnotationManager()
+
         // If bitmap creation is successful
         locationIconBitmap?.let {
             val annotationIdJsonObject = JsonObject()
-            annotationIdJsonObject.addProperty("id", 123)
+            annotationIdJsonObject.addProperty("id", id)
 
-            val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions().withPoint(
+            val pointAnnotationOptions = PointAnnotationOptions().withPoint(
                 Point.fromLngLat(
                     point.longitude(), point.latitude()
                 )
@@ -655,27 +648,20 @@ class MapBoxActivity : AppCompatActivity() {
 
             pointAnnotationManager.addClickListener {
                 mapMiniView.visibility = View.VISIBLE
+                val foundEvent = allEvents.find { event -> event.id.toString() == id }
 
+                if (foundEvent != null) {
+                    mapMiniTitle.text = foundEvent.title
+                    mapMiniAddress.text = foundEvent.location
+
+                    val distanceText = calculateDistance(point).toString() + " km"
+                    mapMiniDistance.text = distanceText
+                    selectedEventDetail = foundEvent
+                }
                 return@addClickListener true
             }
 
             pointAnnotationManager.create(pointAnnotationOptions)
-        }
-    }
-
-
-    private fun updatePointAnnotationLocation(annotationId: String, newPoint: Point) {
-        // Find the annotation with the given ID
-        val annotationToDelete = pointAnnotationManager.annotations.firstOrNull {
-            val annotationData = it.getData()?.asJsonObject
-            val id = annotationData?.get("id")?.asString
-            id == annotationId
-        }
-
-        // If the annotation is found, delete it
-        annotationToDelete?.let {
-            pointAnnotationManager.delete(it)
-            addPointAnnotationToMap(newPoint)
         }
     }
 
@@ -718,5 +704,12 @@ class MapBoxActivity : AppCompatActivity() {
         mapBoxNavigation.unregisterRoutesObserver(routesObserver)
         mapBoxNavigation.unregisterLocationObserver(locationObserver)
         mapBoxNavigation.onDestroy()
+    }
+
+    override fun onItemClick(selectedEventLocation: String?) {
+        val geoPoint = getLocationFromAddress(selectedEventLocation)
+        if (geoPoint != null) {
+            getRouteToPoint(Point.fromLngLat(geoPoint.longitude, geoPoint.latitude))
+        }
     }
 }

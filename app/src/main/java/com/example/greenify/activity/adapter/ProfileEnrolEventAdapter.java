@@ -1,6 +1,6 @@
 package com.example.greenify.activity.adapter;
 
-import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,29 +10,85 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.utils.widget.ImageFilterView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.greenify.R;
+import com.example.greenify.model.UserModel;
+import com.example.greenify.util.FirebaseAPIs;
+import com.example.greenify.util.FirebaseCallback;
+
+import java.util.List;
 
 public class ProfileEnrolEventAdapter extends RecyclerView.Adapter<ProfileEnrolEventAdapter.ViewHolder> {
+    private List<String> eventList;
+    private MapSearchAdapter.OnItemClickListener onItemClickListener;
 
-    public ProfileEnrolEventAdapter(Context context) {
+    private String selectedEvent;
+
+    public interface OnItemClickListener {
+        void onItemClick(String selectedEvent);
+    }
+
+    public void setOnItemClickListener(MapSearchAdapter.OnItemClickListener listener) {
+        this.onItemClickListener = listener;
+    }
+
+    public ProfileEnrolEventAdapter(List<String> eventList) {
+        this.eventList = eventList;
+    }
+
+    public void setEventList(List<String> eventModels) {
+        this.eventList = eventModels;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_profile_event, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_profile_event, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        // You can bind data or perform any other operations here if needed
+        if (eventList.isEmpty()) {
+            return;
+        }
+
+        holder.itemView.findViewById(R.id.item_host_event_img);
+
+        FirebaseAPIs firebaseAPIs = new FirebaseAPIs();
+
+        String eventId = UserModel.getUserSingleTon().getJoinedEvents().get(position);
+
+        holder.imageFilterView.setOnClickListener((v) -> {
+            selectedEvent = eventId;
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(eventId);
+            }
+        });
+        firebaseAPIs.getMediaDownloadUrlFromFirebase(eventId, new FirebaseCallback() {
+            @Override
+            public void onSuccess(boolean success) {
+            }
+
+            @Override
+            public void onSuccess(Uri uri) {
+                Glide.with(holder.itemView.getContext()).load(uri).into(holder.imageFilterView);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+            }
+        });
+
+
     }
 
     @Override
     public int getItemCount() {
-        return 2; // Number of items in the RecyclerView
+        if (eventList != null) {
+            return eventList.size();
+        }
+        return 0;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

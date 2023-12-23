@@ -37,6 +37,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/profile_swipe_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -69,6 +70,7 @@
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintLeft_toLeftOf="parent"
                             android:layout_marginTop="60dp"
+                            android:clickable="true"
                             app:layout_constraintRight_toRightOf="parent" />
 
                         <TextView
@@ -279,112 +281,6 @@
                     app:layout_constraintTop_toBottomOf="@id/profile_txt_enroll_event"
                     android:scrollbars="none"
                     android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/profile_txt_recent_act"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:text="@string/recent_activities"
-                    android:textSize="28sp"
-                    android:fontFamily="@font/nunito_sans"
-                    android:textStyle="bold"
-                    app:layout_constraintTop_toBottomOf="@id/profile_list_enrol_event"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginTop="10dp"
-                    android:alpha="0.8" />
-
-                <TextView
-                    android:id="@+id/profile_txt_recent_act_empty"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/nothing_to_show"
-                    app:layout_constraintTop_toBottomOf="@id/profile_txt_recent_act"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    android:layout_marginTop="30dp"
-                    android:textColor="@color/white_50"
-                    android:fontFamily="@font/nunito_sans"
-                    android:textSize="20sp"
-                    android:layout_marginEnd="20dp"
-                    android:textStyle="bold" />
-
-                <LinearLayout
-                    android:id="@+id/profile_recent_act_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginTop="20dp"
-                    android:visibility="gone"
-                    app:layout_constraintTop_toBottomOf="@id/profile_txt_recent_act"
-                    android:orientation="vertical">
-
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/profile_card_recent_act"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:cardCornerRadius="20dp"
-                        android:backgroundTint="@color/gray_50">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <com.google.android.material.imageview.ShapeableImageView
-                                android:id="@+id/profile_img_recent_act"
-                                android:layout_width="80dp"
-                                android:layout_height="80dp"
-                                android:layout_margin="10dp"
-                                app:shapeAppearanceOverlay="@style/circularImageViewShape"
-                                android:src="@drawable/test"
-                                android:scaleType="centerCrop" />
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical"
-                                android:layout_gravity="center"
-                                android:layout_margin="10dp">
-
-                                <TextView
-                                    android:id="@+id/profile_txt_recent_act_title"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/event_title"
-                                    android:textColor="@color/white"
-                                    android:textSize="26sp"
-                                    android:fontFamily="@font/nunito_sans"
-                                    android:textStyle="bold"
-                                    android:alpha="0.8" />
-
-                                <TextView
-                                    android:id="@+id/profile_txt_description"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/hello_worlddddd"
-                                    android:textColor="@color/white"
-                                    android:fontFamily="@font/nunito_sans"
-                                    android:textSize="16sp"
-                                    android:alpha="0.8" />
-                            </LinearLayout>
-
-                            <TextView
-                                android:id="@+id/text_done"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/done"
-                                android:textColor="@color/light_green_1"
-                                android:textSize="22sp"
-                                android:layout_gravity="center"
-                                android:textStyle="bold"
-                                android:fontFamily="@font/nunito_sans"
-                                android:layout_marginEnd="20dp" />
-                        </LinearLayout>
-                    </androidx.cardview.widget.CardView>
-                </LinearLayout>
-
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

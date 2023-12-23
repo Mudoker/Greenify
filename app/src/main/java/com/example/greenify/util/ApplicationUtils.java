@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -27,8 +28,11 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
@@ -271,5 +275,26 @@ public class ApplicationUtils {
         }
 
         return byteList;
+    }
+
+    // Function to convert URI to Bitmap
+    public static Bitmap getBitmapFromUri(Context context, Uri uri) {
+        try {
+            // Use the content resolver to open the input stream and decode the bitmap
+            InputStream inputStream = context.getContentResolver().openInputStream(uri);
+            return BitmapFactory.decodeStream(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String getCreatedDateAsString(Date date) {
+        if (date != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            return sdf.format(date);
+        } else {
+            return "";
+        }
     }
 }

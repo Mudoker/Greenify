@@ -7,37 +7,38 @@ public class UserModel {
 
     private static UserModel UserSingleTon;
 
-    private final UUID id;
+    private final String id;
     private String username;
     private String phone = "";
     private String email;
 
-    private ArrayList<UUID> joinedEvents = new ArrayList<>();
-    private ArrayList<UUID> hostedEvents = new ArrayList<>();
+    private ArrayList<String> joinedEvents = new ArrayList<>();
+    private ArrayList<String> hostedEvents = new ArrayList<>();
 
     private Double points = 0.0;
 
     private String deviceToken;
 
-    public UserModel(UUID id, String username, String email, String deviceToken) {
+    public UserModel(String id, String username, String email, String deviceToken) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.deviceToken = deviceToken;
     }
 
-    public UserModel(UUID id, String username, String phone, String email, ArrayList<UUID> joinedEvents, Double points, String deviceToken) {
+    public UserModel(String id, String username, String phone, String email, ArrayList<String> joinedEvents, ArrayList<String> hostedEvents, Double points, String deviceToken) {
         this.id = id;
         this.username = username;
         this.phone = phone;
         this.email = email;
         this.joinedEvents = joinedEvents;
+        this.hostedEvents = hostedEvents;
         this.points = points;
         this.deviceToken = deviceToken;
     }
 
     public UserModel() {
-        this.id = UUID.randomUUID();
+        this.id = UUID.randomUUID().toString();
     }
 
     public String getUsername() {
@@ -64,15 +65,15 @@ public class UserModel {
         this.email = email;
     }
 
-    public ArrayList<UUID> getJoinedEvents() {
+    public ArrayList<String> getJoinedEvents() {
         return joinedEvents;
     }
 
-    public void setJoinedEvents(ArrayList<UUID> joinedEvents) {
+    public void setJoinedEvents(ArrayList<String> joinedEvents) {
         this.joinedEvents = joinedEvents;
     }
 
-    public void addJoinedEvents(UUID joinedEvent) {
+    public void addJoinedEvents(String joinedEvent) {
         this.joinedEvents.add(joinedEvent);
     }
 
@@ -92,7 +93,7 @@ public class UserModel {
         this.deviceToken = deviceToken;
     }
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
@@ -108,21 +109,23 @@ public class UserModel {
     }
 
 
-    public ArrayList<UUID> getHostedEvents() {
+    public ArrayList<String> getHostedEvents() {
         return hostedEvents;
     }
 
-    public void setHostedEvents(ArrayList<UUID> hostedEvents) {
+    public void setHostedEvents(ArrayList<String> hostedEvents) {
         this.hostedEvents = hostedEvents;
     }
 
-    public void addHostedEvent(UUID hostedEvent) {
+    public void addHostedEvent(String hostedEvent) {
         this.hostedEvents.add(hostedEvent);
     }
 
-    public void removeHostedEvent(UUID hostedEvent) {
-        if (hostedEvents.contains(hostedEvent)) {
-            hostedEvents.remove(hostedEvent);
-        }
+    public void removeHostedEvent(String hostedEvent) {
+        hostedEvents.remove(hostedEvent);
+    }
+
+    public void removeEnrolEvent(String joinedEvent) {
+        joinedEvents.remove(joinedEvent);
     }
 }

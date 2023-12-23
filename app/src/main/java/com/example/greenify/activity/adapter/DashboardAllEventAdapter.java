@@ -1,6 +1,7 @@
 package com.example.greenify.activity.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.greenify.R;
+import com.example.greenify.activity.event.EventDetailActivity;
 import com.example.greenify.model.EventModel;
 import com.example.greenify.util.EventModelDiffCallback;
 import com.example.greenify.util.FirebaseAPIs;
@@ -48,15 +50,31 @@ public class DashboardAllEventAdapter extends RecyclerView.Adapter<DashboardAllE
             holder.eventType.setText(eventModel.getCategory());
 
             FirebaseAPIs firebaseAPIs = new FirebaseAPIs();
-            firebaseAPIs.getUserDataById(eventModel.getOwnerId().toString(), userModel -> {
-                String hostName = userModel.getUsername();
 
-                if (TextUtils.isEmpty(hostName)) {
-                    hostName = userModel.getEmail();
+            final String[] hostName = {null};
+
+            // Get user data in the background
+            firebaseAPIs.getUserDataById(eventModel.getOwnerId(), userModel -> {
+                hostName[0] = userModel.getUsername();
+
+                if (TextUtils.isEmpty(hostName[0])) {
+                    hostName[0] = userModel.getEmail();
                 }
-                holder.hostName.setText(hostName);
-            }, e -> holder.hostName.setText(R.string.undefined));
 
+                // Update UI on the main thread
+                if (TextUtils.isEmpty(hostName[0])) {
+                    hostName[0] = userModel.getEmail();
+                }
+                holder.hostName.setText(hostName[0]);
+
+            }, e -> {
+                // Update UI on the main thread
+                holder.itemView.post(() -> {
+                    holder.hostName.setText(R.string.undefined);
+                });
+            });
+
+            // Get media download URL in the background
             firebaseAPIs.getMediaDownloadUrlFromFirebase(eventModel.getId(), new FirebaseCallback() {
                 @Override
                 public void onSuccess(boolean success) {
@@ -64,7 +82,10 @@ public class DashboardAllEventAdapter extends RecyclerView.Adapter<DashboardAllE
 
                 @Override
                 public void onSuccess(Uri uri) {
-                    Glide.with(holder.itemView.getContext()).load(uri).into(holder.eventImage);
+                    // Load image using Glide in the UI thread
+                    holder.itemView.post(() -> {
+                        Glide.with(holder.itemView.getContext()).load(uri).into(holder.eventImage);
+                    });
                 }
 
                 @Override
@@ -72,6 +93,13 @@ public class DashboardAllEventAdapter extends RecyclerView.Adapter<DashboardAllE
                 }
             });
 
+            holder.itemView.setOnClickListener(v -> {
+                Intent intent = new Intent(holder.itemView.getContext(), EventDetailActivity.class);
+                intent.putExtra("EVENT_MODEL", eventModel);
+                intent.putExtra("HOST_NAME", hostName[0]);
+                holder.itemView.getContext().startActivity(intent);
+            });
+            
             holder.itemView.setVisibility(View.VISIBLE);
         } else {
             holder.itemView.setVisibility(View.GONE);

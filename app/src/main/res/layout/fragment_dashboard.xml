@@ -35,6 +35,7 @@
                     android:textStyle="bold" />
 
                 <androidx.constraintlayout.utils.widget.ImageFilterView
+                    android:id="@+id/btn_event_create"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:tint="@color/white"
@@ -44,6 +45,7 @@
                     android:src="@drawable/baseline_add_to_photos_24" />
 
                 <androidx.constraintlayout.utils.widget.ImageFilterView
+                    android:id="@+id/btn_open_map"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:tint="@color/white"
